@@ -1,0 +1,252 @@
+// Dữ liệu mẫu. Giá, tồn kho, mô tả là DỮ LIỆU GIẢ để demo - hãy sửa lại cho đúng thực tế.
+module.exports = {
+  users: {
+    admin: { fullName: 'Quản trị viên', email: 'admin@flowerhappy.vn', password: 'Admin@123', phone: '0900000000', role: 'admin' },
+    clients: [
+      { fullName: 'Nguyễn Văn An', email: 'khach@flowerhappy.vn', password: 'Khach@123', phone: '0911111111' },
+      { fullName: 'Trần Thị Bình', email: 'binh@flowerhappy.vn', password: 'Khach@123', phone: '0922222222' },
+      { fullName: 'Lê Minh Châu', email: 'chau@flowerhappy.vn', password: 'Khach@123', phone: '0933333333' },
+    ],
+  },
+
+  address: {
+    receiverName: 'Nguyễn Văn An',
+    receiverPhone: '0911111111',
+    province: 'TP. Hồ Chí Minh',
+    ward: 'Phường Sài Gòn',
+    detail: '12 Nguyễn Huệ',
+  },
+
+  // type: occasion = Dịp tặng, style = Kiểu dáng
+  categories: [
+    { name: 'Sinh nhật', type: 'occasion' },
+    { name: 'Tình yêu', type: 'occasion' },
+    { name: 'Chúc mừng', type: 'occasion' },
+    { name: 'Kỷ niệm', type: 'occasion' },
+    { name: 'Khai trương', type: 'occasion' },
+    { name: 'Bó hoa', type: 'style' },
+    { name: 'Giỏ hoa', type: 'style' },
+    { name: 'Bình hoa', type: 'style' },
+    { name: 'Hộp hoa', type: 'style' },
+    { name: 'Hoa khô', type: 'style' },
+  ],
+
+  // pricePerStem: giá mỗi cành (VND) - dùng khi khách tăng/giảm số cành
+  flowerTypes: [
+    { name: 'Hoa hồng đỏ', color: 'Đỏ', pricePerStem: 25000 },
+    { name: 'Hoa hồng hồng', color: 'Hồng', pricePerStem: 25000 },
+    { name: 'Hoa hồng trắng', color: 'Trắng', pricePerStem: 28000 },
+    { name: 'Hoa hồng tím', color: 'Tím', pricePerStem: 30000 },
+    { name: 'Cẩm tú cầu', color: 'Hồng', pricePerStem: 80000 },
+    { name: 'Lan hồ điệp', color: 'Hồng', pricePerStem: 120000 },
+    { name: 'Cúc tana', color: 'Trắng', pricePerStem: 8000 },
+    { name: 'Hướng dương', color: 'Vàng', pricePerStem: 35000 },
+    { name: 'Đồng tiền', color: 'Vàng', pricePerStem: 12000 },
+    { name: 'Lavender khô', color: 'Tím', pricePerStem: 5000 },
+    { name: 'Cẩm chướng', color: 'Hồng', pricePerStem: 15000 },
+    { name: 'Hoa baby', color: 'Trắng', pricePerStem: 20000 },
+    { name: 'Lá bạc', color: 'Xanh', pricePerStem: 10000 },
+  ],
+
+  // components: [tên loại hoa, số cành mặc định, cho tăng giảm, (min cành), (max cành)]
+  // Không ghi min/max: loại cho tăng giảm lấy min = 1/2 số cành, max = gấp đôi; loại cố định thì min = max = số cành
+  products: [
+    {
+      name: 'Mây Hồng Nhẹ Nhàng',
+      images: ['may-hong-nhe-nhang-1.jpg', 'may-hong-nhe-nhang-2.jpg', 'may-hong-nhe-nhang-3.jpg'],
+      originalPrice: 950000, salePrice: 850000, stock: 15,
+      categories: ['bo-hoa', 'sinh-nhat', 'ky-niem'],
+      components: [['Cẩm tú cầu', 2, false], ['Lan hồ điệp', 3, false], ['Hoa hồng hồng', 10, true]],
+      description: 'Bó hoa tông hồng pastel kết hợp cẩm tú cầu và lan hồ điệp, nhẹ nhàng như một đám mây – món quà tinh tế cho người thương.',
+    },
+    {
+      name: 'Lux Mica Flower',
+      images: ['lux-mica-flower-1.jpg', 'lux-mica-flower-2.jpg', 'lux-mica-flower-3.jpg'],
+      originalPrice: 1250000, stock: 8,
+      categories: ['hop-hoa', 'ky-niem', 'chuc-mung'],
+      components: [['Hoa hồng hồng', 12, true], ['Hoa hồng trắng', 6, true], ['Cẩm chướng', 5, true]],
+      description: 'Hộp mica trong suốt sang trọng, hoa hồng và cẩm chướng được cắm trên nền rêu tự nhiên, giữ tươi lâu.',
+    },
+    {
+      name: 'Vườn Nắng',
+      images: ['vuon-nang-1.jpg', 'vuon-nang-2.jpg'],
+      originalPrice: 780000, stock: 12,
+      categories: ['gio-hoa', 'khai-truong', 'chuc-mung'],
+      components: [['Hướng dương', 3, false], ['Đồng tiền', 10, true]],
+      description: 'Giỏ hoa rực rỡ sắc vàng mang năng lượng tích cực, rất hợp để chúc mừng khai trương, thăng chức.',
+    },
+    {
+      name: 'Lời Yêu Thương',
+      images: ['loi-yeu-thuong-1.jpg', 'loi-yeu-thuong-2.jpg'],
+      originalPrice: 650000, salePrice: 590000, stock: 20,
+      categories: ['bo-hoa', 'tinh-yeu'],
+      components: [['Hoa hồng hồng', 15, true, 9, 30], ['Hoa baby', 3, true, 1, 6]],
+      description: 'Bó hồng hồng gói giấy đen hiện đại, gửi gắm lời yêu thương ngọt ngào.',
+    },
+    {
+      name: 'Điều Thân Thương',
+      images: ['dieu-than-thuong-1.jpg', 'dieu-than-thuong-2.jpg', 'dieu-than-thuong-3.jpg'],
+      originalPrice: 720000, stock: 14,
+      categories: ['bo-hoa', 'sinh-nhat', 'tinh-yeu'],
+      components: [['Hoa hồng đỏ', 5, false], ['Hoa hồng hồng', 10, true], ['Hoa baby', 3, true]],
+      description: 'Sự kết hợp giữa hồng đỏ nổi bật và hồng phấn dịu dàng, gói giấy đỏ nơ lớn ấn tượng.',
+    },
+    {
+      name: 'Thổn Thức',
+      images: ['thon-thuc-1.jpg', 'thon-thuc-2.jpg'],
+      originalPrice: 890000, stock: 10,
+      categories: ['bo-hoa', 'tinh-yeu', 'ky-niem'],
+      components: [['Hoa hồng đỏ', 20, true, 10, 40], ['Hoa hồng hồng', 5, true, 0, 10]],
+      description: 'Bó hoa hồng đỏ thắm với nơ ruy băng lớn – dành cho những khoảnh khắc trái tim thổn thức.',
+    },
+    {
+      name: 'Yêu Thương Đong Đầy',
+      images: ['yeu-thuong-dong-day-1.jpg', 'yeu-thuong-dong-day-2.jpg'],
+      originalPrice: 550000, stock: 18,
+      categories: ['bo-hoa', 'sinh-nhat', 'chuc-mung'],
+      components: [['Hướng dương', 1, false], ['Hoa hồng trắng', 6, true], ['Hoa baby', 3, true]],
+      description: 'Hướng dương làm điểm nhấn giữa những đoá hồng kem, tươi sáng và ấm áp.',
+    },
+    {
+      name: 'Giỏ Cúc Tana Mini',
+      images: ['gio-cuc-tana-mini-1.jpg', 'gio-cuc-tana-mini-2.jpg'],
+      originalPrice: 420000, salePrice: 380000, stock: 25,
+      categories: ['gio-hoa', 'chuc-mung', 'sinh-nhat'],
+      components: [['Cúc tana', 20, false]],
+      description: 'Giỏ mây nhỏ xinh đầy cúc tana trắng tinh khôi, phù hợp trang trí bàn làm việc.',
+    },
+    {
+      name: 'Lời Từ Trái Tim',
+      images: ['loi-tu-trai-tim-1.jpg', 'loi-tu-trai-tim-2.jpg', 'loi-tu-trai-tim-3.jpg'],
+      originalPrice: 1500000, salePrice: 1350000, stock: 6,
+      categories: ['bo-hoa', 'tinh-yeu', 'ky-niem'],
+      components: [['Hoa hồng đỏ', 50, false], ['Lá bạc', 5, true]],
+      description: 'Bó 50 đoá hồng đỏ – lời tỏ tình trọn vẹn nhất từ trái tim.',
+    },
+    {
+      name: 'Yêu Thương Ngọt Ngào',
+      images: ['yeu-thuong-ngot-ngao-1.jpg', 'yeu-thuong-ngot-ngao-2.jpg', 'yeu-thuong-ngot-ngao-3.jpg'],
+      originalPrice: 690000, stock: 16,
+      categories: ['bo-hoa', 'sinh-nhat', 'tinh-yeu'],
+      components: [['Hoa hồng hồng', 12, true], ['Hoa hồng trắng', 6, true], ['Hoa baby', 3, true]],
+      description: 'Tông hồng – trắng ngọt ngào, gói giấy hồng phấn đáng yêu.',
+    },
+    {
+      name: 'Lạc Thần',
+      images: ['lac-than-1.jpg', 'lac-than-2.jpg'],
+      originalPrice: 980000, stock: 9,
+      categories: ['gio-hoa', 'chuc-mung', 'ky-niem'],
+      components: [['Hoa hồng hồng', 30, true], ['Lá bạc', 5, true]],
+      description: 'Giỏ hồng phấn bung nở rực rỡ, sang trọng và đầy nữ tính.',
+    },
+    {
+      name: 'Bên Hiên Nhà',
+      images: ['ben-hien-nha-1.jpg', 'ben-hien-nha-2.jpg'],
+      originalPrice: 850000, stock: 11,
+      categories: ['gio-hoa', 'chuc-mung', 'sinh-nhat'],
+      components: [['Hoa hồng trắng', 20, true], ['Hoa hồng hồng', 5, true], ['Lá bạc', 5, true]],
+      description: 'Giỏ hoa hồng kem – trắng thanh lịch, mang lại cảm giác bình yên như góc hiên nhà.',
+    },
+    {
+      name: 'Cosmic Glow',
+      images: ['cosmic-glow-1.jpg', 'cosmic-glow-2.jpg'],
+      originalPrice: 1100000, stock: 7,
+      categories: ['binh-hoa', 'khai-truong', 'chuc-mung'],
+      components: [['Lan hồ điệp', 5, false], ['Cẩm chướng', 10, true]],
+      description: 'Bình hoa tông hồng rực rỡ, phong cách hiện đại – điểm nhấn cho không gian sống.',
+    },
+    {
+      name: 'Bó Hoa Lavender Khô',
+      images: ['bo-hoa-lavender-kho-1.png', 'bo-hoa-lavender-kho-2.png'],
+      originalPrice: 350000, salePrice: 299000, stock: 30,
+      categories: ['hoa-kho', 'bo-hoa', 'ky-niem'],
+      components: [['Lavender khô', 40, true, 20, 80]],
+      description: 'Bó lavender khô thơm dịu, giữ được nhiều tháng – món quà lưu giữ kỷ niệm.',
+    },
+    {
+      name: 'Chỉ Yêu Mình Em',
+      images: ['chi-yeu-minh-em-1.jpg', 'chi-yeu-minh-em-2.jpg'],
+      originalPrice: 990000, stock: 10,
+      categories: ['bo-hoa', 'tinh-yeu'],
+      components: [['Hoa hồng đỏ', 33, false]],
+      description: 'Bó 33 hồng đỏ gói giấy đen – thông điệp "chỉ yêu mình em" mạnh mẽ.',
+    },
+    {
+      name: 'Garden Style',
+      images: ['garden-style-1.jpg', 'garden-style-2.jpg'],
+      originalPrice: 620000, stock: 15,
+      categories: ['bo-hoa', 'sinh-nhat', 'chuc-mung'],
+      components: [['Đồng tiền', 5, true], ['Hoa hồng hồng', 6, true], ['Hoa hồng trắng', 4, true]],
+      description: 'Bó hoa phong cách vườn với nhiều màu sắc tươi vui, tự nhiên.',
+    },
+    {
+      name: 'Mini Flower Vase',
+      images: ['mini-flower-vase-1.jpg', 'mini-flower-vase-2.jpg'],
+      originalPrice: 390000, stock: 20,
+      categories: ['binh-hoa', 'chuc-mung'],
+      components: [['Cúc tana', 15, false], ['Lá bạc', 3, true]],
+      description: 'Bình cúc tana mini xinh xắn, thích hợp trang trí bàn trà, bàn làm việc.',
+    },
+    {
+      name: 'Kisses',
+      images: ['kisses-1.jpg', 'kisses-2.jpg'],
+      originalPrice: 480000, stock: 18,
+      categories: ['bo-hoa', 'tinh-yeu', 'sinh-nhat'],
+      components: [['Cẩm chướng', 7, true], ['Hoa hồng hồng', 5, true]],
+      description: 'Bó hoa nhỏ nhắn đáng yêu với cẩm chướng và hồng phấn – như một nụ hôn ngọt ngào.',
+    },
+    {
+      name: 'Tuổi Mộng Mơ',
+      images: ['tuoi-mong-mo-1.jpg', 'tuoi-mong-mo-2.jpg'],
+      originalPrice: 560000, stock: 14,
+      categories: ['bo-hoa', 'sinh-nhat'],
+      components: [['Hoa hồng trắng', 7, true], ['Hoa baby', 3, true], ['Lá bạc', 3, true]],
+      description: 'Bó hồng kem gói giấy xanh mint tươi mát, dành cho tuổi trẻ mộng mơ.',
+    },
+    {
+      name: 'Ân Cần',
+      images: ['an-can-1.jpg', 'an-can-2.jpg'],
+      originalPrice: 590000, stock: 13,
+      categories: ['bo-hoa', 'ky-niem', 'sinh-nhat'],
+      components: [['Hoa hồng tím', 9, false], ['Lá bạc', 3, true]],
+      description: 'Bó hồng tím thuỷ chung, gửi lời quan tâm ân cần đến người bạn trân quý.',
+    },
+  ],
+
+  discounts: [
+    { code: 'WELCOME10', type: 'percentage', value: 10, maxDiscount: 100000, minOrder: 300000, maxUsage: 200 },
+    { code: 'GIAM50K', type: 'fixed', value: 50000, minOrder: 500000, maxUsage: 100 },
+    { code: 'VALENTINE', type: 'percentage', value: 15, maxDiscount: 200000, minOrder: 800000, maxUsage: 50, days: 14 },
+  ],
+
+  posts: [
+    {
+      title: 'Ý nghĩa màu sắc của hoa hồng',
+      thumbnail: '/images/products/thon-thuc-1.jpg',
+      summary: 'Mỗi màu hoa hồng mang một thông điệp riêng. Cùng Flower Happy tìm hiểu để chọn đúng món quà.',
+      content:
+        '<p><b>Hồng đỏ</b> – tình yêu nồng cháy, lời tỏ tình trọn vẹn.</p><p><b>Hồng phấn</b> – sự dịu dàng, biết ơn và ngưỡng mộ.</p><p><b>Hồng trắng</b> – sự thuần khiết, khởi đầu mới.</p><p><b>Hồng tím</b> – tình yêu thuỷ chung, sự trân trọng.</p>',
+    },
+    {
+      title: 'Cách giữ hoa tươi lâu tại nhà',
+      thumbnail: '/images/products/mini-flower-vase-1.jpg',
+      summary: '5 mẹo đơn giản giúp bó hoa của bạn tươi thêm vài ngày.',
+      content:
+        '<ol><li>Cắt chéo gốc hoa 2–3cm trước khi cắm.</li><li>Thay nước mỗi ngày, rửa sạch bình.</li><li>Tỉa bỏ lá ngập trong nước.</li><li>Đặt hoa nơi thoáng mát, tránh nắng trực tiếp.</li><li>Có thể thêm một chút đường hoặc dưỡng hoa vào nước.</li></ol>',
+    },
+    {
+      title: 'Gợi ý chọn hoa khai trương hợp phong thuỷ',
+      thumbnail: '/images/products/vuon-nang-1.jpg',
+      summary: 'Hoa tông vàng, đỏ tượng trưng cho tài lộc và may mắn trong ngày khai trương.',
+      content:
+        '<p>Ngày khai trương nên chọn hoa có màu sắc tươi sáng như <b>vàng</b> (tài lộc), <b>đỏ</b> (may mắn). Hướng dương, đồng tiền và lan hồ điệp là những lựa chọn phổ biến.</p>',
+    },
+  ],
+
+  reviewComments: [
+    'Hoa rất tươi, gói đẹp, giao đúng giờ. Người nhận rất thích!',
+    'Shop tư vấn nhiệt tình, hoa giống hình 100%.',
+    'Giao nhanh, thiệp viết tay đẹp. Sẽ ủng hộ tiếp.',
+    'Hoa đẹp nhưng giao trễ khoảng 15 phút, vẫn ổn.',
+  ],
+};

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh toán | Flowers Happy</title>
+  <link rel="icon" href="/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="container">
+    <h1 class="page-title">Thanh toán</h1>
+    <form id="checkoutForm" class="two-col">
+      <div class="panel">
+        <h3>Thông tin người nhận</h3>
+        <div class="field" id="addrPick"></div>
+        <div class="row">
+          <div class="field"><label>Tên người nhận *</label><input name="receiverName" required></div>
+          <div class="field"><label>Số điện thoại *</label><input name="receiverPhone" required pattern="0[0-9]{9}" title="10 số, bắt đầu bằng 0"></div>
+        </div>
+        <div class="field"><label>Địa chỉ chi tiết *</label><input name="detail" required placeholder="Số nhà, tên đường"></div>
+        <div class="row">
+          <div class="field"><label>Phường/Xã *</label><input name="ward" required></div>
+          <div class="field"><label>Tỉnh/Thành phố *</label><input name="province" required></div>
+        </div>
+        <label id="saveAddrBox" style="font-weight:400;margin:-4px 0 14px"><input type="checkbox" id="saveAddr" checked style="width:auto"> Lưu địa chỉ này vào tài khoản cho lần mua sau</label>
+        <div class="row">
+          <div class="field"><label>Ngày giao</label><input type="date" name="deliveryDate"></div>
+          <div class="field"><label>Khung giờ giao</label>
+            <select name="deliveryTimeSlot"><option>08:00 - 10:00</option><option>10:00 - 12:00</option><option>14:00 - 16:00</option><option>16:00 - 18:00</option><option>18:00 - 20:00</option></select></div>
+        </div>
+        <div class="field"><label>Lời nhắn trên thiệp</label><textarea name="cardMessage" rows="2" maxlength="200" placeholder="Ví dụ: Chúc mừng sinh nhật em yêu!"></textarea></div>
+        <div class="field"><label>Ghi chú cho cửa hàng</label><textarea name="note" rows="2"></textarea></div>
+        <h3>Phương thức thanh toán</h3>
+        <label style="font-weight:400"><input type="radio" name="paymentMethod" value="COD" checked style="width:auto"> Thanh toán khi nhận hàng (COD)</label>
+        <label style="font-weight:400"><input type="radio" name="paymentMethod" value="BANKING" style="width:auto"> Chuyển khoản ngân hàng <span class="muted">(cửa hàng xác nhận thủ công)</span></label>
+      </div>
+      <div class="panel">
+        <h3>Đơn hàng</h3>
+        <div id="items"></div>
+        <div class="field" style="display:flex;gap:8px;margin-top:12px">
+          <input id="discountCode" placeholder="Mã giảm giá" style="text-transform:uppercase">
+          <button type="button" class="btn btn-outline btn-sm" id="applyCode">Áp dụng</button>
+        </div>
+        <div class="summary-line"><span>Tạm tính</span><span id="sSub"></span></div>
+        <div class="summary-line"><span>Phí giao hàng</span><span id="sShip"></span></div>
+        <div class="summary-line"><span>Giảm giá</span><span id="sDisc"></span></div>
+        <div class="summary-line summary-total"><span>Tổng cộng</span><span id="sTotal"></span></div>
+        <p class="hint">Phụ thu cho "Yêu cầu của khách hàng" (nếu có) sẽ được cửa hàng báo giá và chỉ cộng vào khi bạn đồng ý.</p>
+        <button class="btn btn-block" style="margin-top:14px">Đặt hàng</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản trị | Flowers Happy</title>
+  <link rel="icon" href="/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="admin">
+  <aside class="sidebar">
+    <a href="/" class="side-logo"><img src="/images/logo-sm.png" alt="Flowers Happy"></a>
+    <nav id="menu">
+      <a data-tab="dashboard" data-icon="chart">Báo cáo & thống kê</a>
+      <a data-tab="orders" data-icon="clipboard">Đơn hàng</a>
+      <a data-tab="products" data-icon="package">Sản phẩm</a>
+      <a data-tab="categories" data-icon="tag">Loại sản phẩm</a>
+      <a data-tab="flowers" data-icon="flower">Loại hoa</a>
+      <a data-tab="discounts" data-icon="ticket">Mã giảm giá</a>
+      <a data-tab="users" data-icon="users">Người dùng</a>
+      <a data-tab="posts" data-icon="fileText">Bài viết</a>
+    </nav>
+    <div class="side-foot">
+      <span id="adminName"></span>
+      <a href="/" data-icon="arrowLeft">Về trang web</a>
+      <button onclick="AdminAuth.logout()" data-icon="logout">Đăng xuất</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <h1 id="tabTitle"></h1>
+    <div id="view"></div>
+  </main>
+
+  <dialog id="modal">
+    <form method="dialog" id="modalForm">
+      <h2 id="modalTitle"></h2>
+      <div id="modalBody"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Đóng</button>
+        <button class="btn" id="modalSubmit" value="ok">Lưu</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast"></div>
+  <script>window.ADMIN_PAGE = true;</script>
+  <script src="/js/common.js"></script>
+  <script src="/admin/admin-auth.js"></script>
+  <script src="/admin/admin.js"></script>
+</body>
+</html>

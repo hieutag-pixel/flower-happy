@@ -1,0 +1,25 @@
+### Kiểm thử API ngay trong VS Code (cài extension "REST Client", bấm "Send Request" phía trên mỗi request)
+@host = http://localhost:5000/api
+
+### 1. Đăng nhập admin -> copy "token" trong kết quả dán vào biến @token bên dưới
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{ "email": "admin@flowerhappy.vn", "password": "Admin@123" }
+
+###
+@token = DAN_TOKEN_VAO_DAY
+
+### 2. Danh sách sản phẩm (tìm kiếm + lọc + sắp xếp)
+GET {{host}}/products?q=hoa&category=sinh-nhat&sort=price_asc&page=1&limit=5
+
+### 3. Chi tiết sản phẩm theo slug
+GET {{host}}/products/kisses
+
+### 4. Thống kê (admin)
+GET {{host}}/admin/stats?period=month
+Authorization: Bearer {{token}}
+
+### 5. Danh sách đơn hàng (admin)
+GET {{host}}/orders?status=pending
+Authorization: Bearer {{token}}

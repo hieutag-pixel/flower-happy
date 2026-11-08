@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết sản phẩm | Flowers Happy</title>
+  <link rel="icon" href="/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="container">
+    <div id="detail" class="detail"><p class="muted">Đang tải...</p></div>
+    <section class="section" style="padding-top:0">
+      <div class="two-col">
+        <div class="panel">
+          <h2 style="font-size:24px">Đánh giá khách hàng</h2>
+          <div id="reviews"></div>
+        </div>
+        <div class="panel" id="reviewFormBox">
+          <h3>Viết đánh giá</h3>
+          <p class="muted" style="font-size:14px">Bạn cần đăng nhập và có đơn hàng đã hoàn thành với sản phẩm này.</p>
+          <form id="reviewForm">
+            <div class="field"><label>Số sao</label>
+              <select name="rating"><option value="5">★★★★★ Tuyệt vời</option><option value="4">★★★★ Tốt</option><option value="3">★★★ Bình thường</option><option value="2">★★ Chưa tốt</option><option value="1">★ Tệ</option></select></div>
+            <div class="field"><label>Nhận xét</label><textarea name="comment" rows="3" placeholder="Chia sẻ cảm nhận của bạn"></textarea></div>
+            <button class="btn btn-block">Gửi đánh giá</button>
+          </form>
+        </div>
+      </div>
+    </section>
+    <section class="section" style="padding-top:0">
+      <div class="section-head"><h2>Có thể bạn cũng thích</h2></div>
+      <div class="grid" id="related"></div>
+    </section>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/product.js"></script>
+</body>
+</html>

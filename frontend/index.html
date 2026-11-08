@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoa tươi giao nhanh | Flowers Happy</title>
+  <link rel="icon" href="/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div>
+          <p class="muted" style="letter-spacing:.2em;text-transform:uppercase;font-size:13px">Tiệm hoa Flowers Happy</p>
+          <h1>Gửi trọn yêu thương<br>trong từng <em>đoá hoa</em></h1>
+          <p>Hoa tươi nhập mỗi sáng, thiết kế thủ công, giao tận tay trong 2 giờ. Bạn có thể tăng giảm số cành hoặc gửi yêu cầu riêng cho cửa hàng.</p>
+          <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap">
+            <a href="/products.html" class="btn">Mua hoa ngay</a>
+            <a href="/products.html?category=tinh-yeu" class="btn btn-outline">Hoa tình yêu</a>
+          </div>
+        </div>
+        <div class="hero-imgs">
+          <img src="/images/products/may-hong-nhe-nhang-1.jpg" alt="Bó hoa Mây Hồng Nhẹ Nhàng">
+          <img src="/images/products/vuon-nang-1.jpg" alt="Giỏ hoa Vườn Nắng">
+        </div>
+      </div>
+    </section>
+
+    <div class="container perks">
+      <div class="perk"><span data-icon="truck"></span><div><b>Giao nhanh 2 giờ</b><small>Nội thành</small></div></div>
+      <div class="perk"><span data-icon="flower"></span><div><b>Hoa tươi mỗi ngày</b><small>Nhập vào buổi sáng</small></div></div>
+      <div class="perk"><span data-icon="gift"></span><div><b>Thiệp viết tay</b><small>Miễn phí</small></div></div>
+      <div class="perk"><span data-icon="sliders"></span><div><b>Tuỳ chỉnh số cành</b><small>Tăng giảm theo ý thích</small></div></div>
+    </div>
+
+    <section class="section container">
+      <div class="section-head"><h2>Chọn hoa theo dịp</h2></div>
+      <div class="chips" id="occasions"></div>
+    </section>
+
+    <section class="section container">
+      <div class="section-head"><h2>Bán chạy nhất</h2><a href="/products.html?sort=best" class="btn btn-outline btn-sm">Xem tất cả</a></div>
+      <div class="grid" id="best"></div>
+    </section>
+
+    <section class="section container">
+      <div class="section-head"><h2>Hoa mới về</h2><a href="/products.html" class="btn btn-outline btn-sm">Xem tất cả</a></div>
+      <div class="grid" id="newest"></div>
+    </section>
+
+    <section class="section container">
+      <div class="section-head"><h2>Góc chia sẻ</h2><a href="/posts.html" class="btn btn-outline btn-sm">Tất cả bài viết</a></div>
+      <div class="grid" id="posts" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))"></div>
+    </section>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/home.js"></script>
+</body>
+</html>

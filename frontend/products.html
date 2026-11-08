@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sản phẩm | Flowers Happy</title>
+  <link rel="icon" href="/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="container shop">
+    <aside class="filter-box">
+      <h4 style="margin-top:0">Dịp tặng</h4><div id="occasionList"></div>
+      <h4>Kiểu dáng</h4><div id="styleList"></div>
+      <h4>Khoảng giá</h4>
+      <div class="row" style="gap:8px">
+        <input type="number" id="minPrice" placeholder="Từ" min="0" step="50000">
+        <input type="number" id="maxPrice" placeholder="Đến" min="0" step="50000">
+      </div>
+      <button class="btn btn-sm btn-block" style="margin-top:10px" id="applyPrice">Áp dụng</button>
+    </aside>
+    <section>
+      <div class="toolbar">
+        <h1 id="title" style="margin:0;font-size:28px">Tất cả sản phẩm</h1>
+        <select id="sort" aria-label="Sắp xếp">
+          <option value="newest">Mới nhất</option>
+          <option value="best">Bán chạy</option>
+          <option value="price_asc">Giá tăng dần</option>
+          <option value="price_desc">Giá giảm dần</option>
+        </select>
+      </div>
+      <p class="muted" id="resultInfo"></p>
+      <div class="grid" id="list" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+      <div class="pagination" id="pager"></div>
+    </section>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/products.js"></script>
+</body>
+</html>

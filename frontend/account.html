@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tài khoản | Flowers Happy</title>
+  <link rel="icon" href="/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="container" style="padding-bottom:56px">
+    <h1 class="page-title">Tài khoản của tôi</h1>
+    <div class="two-col" style="grid-template-columns:1fr 1fr">
+      <div>
+        <form class="panel" id="infoForm" style="margin-bottom:22px">
+          <h3>Thông tin cá nhân</h3>
+          <div class="field"><label>Email</label><input name="email" disabled></div>
+          <div class="field"><label>Họ tên</label><input name="fullName" required></div>
+          <div class="field"><label>Số điện thoại</label><input name="phone"></div>
+          <button class="btn">Lưu thay đổi</button>
+        </form>
+        <form class="panel" id="pwForm">
+          <h3>Đổi mật khẩu</h3>
+          <div class="field"><label>Mật khẩu hiện tại</label><input type="password" name="currentPassword" required></div>
+          <div class="field"><label>Mật khẩu mới</label><input type="password" name="newPassword" minlength="6" required></div>
+          <button class="btn">Đổi mật khẩu</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>Sổ địa chỉ</h3>
+        <div id="addresses"></div>
+        <form id="addrForm" style="margin-top:16px;border-top:1px dashed var(--line);padding-top:16px">
+          <h4>Thêm địa chỉ</h4>
+          <div class="row">
+            <div class="field"><label>Người nhận</label><input name="receiverName" required></div>
+            <div class="field"><label>SĐT</label><input name="receiverPhone" required></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>Tỉnh/Thành phố</label><input name="province" required></div>
+            <div class="field"><label>Phường/Xã</label><input name="ward" required></div>
+          </div>
+          <div class="field"><label>Địa chỉ chi tiết</label><input name="detail" required></div>
+          <label style="font-weight:400"><input type="checkbox" name="isDefault" style="width:auto"> Đặt làm mặc định</label>
+          <button class="btn btn-sm" style="margin-top:10px">Thêm địa chỉ</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/account.js"></script>
+</body>
+</html>
