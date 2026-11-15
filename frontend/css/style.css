@@ -189,6 +189,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
 /* Compare */
 .compare-bar { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--brown-dark); color: #fff; padding: 10px 14px 10px 20px; border-radius: 999px; display: flex; gap: 14px; align-items: center; box-shadow: var(--shadow); z-index: 60; }
 .compare-bar .btn { background: #fff; color: var(--brown-dark); border-color: #fff; }
+.compare-bar .compare-clear { width: 28px; height: 28px; border: 0; border-radius: 50%; background: rgba(255,255,255,.18); color: #fff; font-size: 18px; line-height: 1; cursor: pointer; }
+.compare-bar .compare-clear:hover { background: rgba(255,255,255,.32); }
 .compare-table td, .compare-table th { min-width: 200px; }
 
 /* Posts */

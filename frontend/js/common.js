@@ -168,6 +168,7 @@ function renderLayout() {
   updateCartCount();
   updateQuoteNotice();
   renderCompareBar();
+  cleanCompare();
 }
 
 async function updateCartCount() {
@@ -219,7 +220,30 @@ function renderCompareBar() {
   const n = Compare.ids.length;
   if (!n || location.pathname.endsWith('compare.html')) { bar?.remove(); return; }
   if (!bar) { bar = document.createElement('div'); bar.className = 'compare-bar'; document.body.appendChild(bar); }
-  bar.innerHTML = `<span>Đã chọn ${n} sản phẩm để so sánh</span><a class="btn btn-sm" href="/compare.html">So sánh ngay</a>`;
+  bar.innerHTML = `<span>Đã chọn ${n} sản phẩm để so sánh</span><a class="btn btn-sm" href="/compare.html">So sánh ngay</a>
+    <button type="button" class="compare-clear" aria-label="Bỏ chọn tất cả" title="Bỏ chọn tất cả">×</button>`;
+  bar.querySelector('.compare-clear').onclick = () => { Compare.ids = []; syncCompareButtons(); };
+}
+// Cập nhật lại các nút "So sánh" trên thẻ sản phẩm theo danh sách đang chọn
+function syncCompareButtons() {
+  const ids = Compare.ids;
+  document.querySelectorAll('[data-compare]').forEach((b) => {
+    const on = ids.includes(b.dataset.compare);
+    b.classList.toggle('on', on);
+    b.innerHTML = compareLabel(on);
+  });
+}
+// Danh sách so sánh lưu trong localStorage nên có thể còn mã sản phẩm cũ (đã xoá, hoặc đổi mã sau khi seed lại).
+// Mỗi lần mở trang, hỏi lại server và bỏ những mã không còn tồn tại, tránh thanh "Đã chọn N sản phẩm" hiện mãi.
+async function cleanCompare() {
+  const ids = Compare.ids;
+  if (!ids.length) return;
+  try {
+    const { data } = await api(`/products/compare?ids=${ids.join(',')}`);
+    const alive = data.map((p) => p._id);
+    const kept = ids.filter((id) => alive.includes(id));
+    if (kept.length !== ids.length) { Compare.ids = kept; syncCompareButtons(); }
+  } catch { /* mất mạng thì giữ nguyên */ }
 }
 
 // Thẻ sản phẩm dùng chung
@@ -231,7 +255,7 @@ function productCard(p) {
     <div class="thumb">
       <a href="/product.html?slug=${p.slug}"><img src="${p.thumbnail}" alt="${esc(p.name)}" loading="lazy"></a>
       ${onSale ? `<span class="sale">-${Math.round((1 - p.salePrice / p.originalPrice) * 100)}%</span>` : ''}
-      <button class="compare-btn ${inCompare ? 'on' : ''}" onclick="Compare.toggle('${p._id}', this)">${compareLabel(inCompare)}</button>
+      <button class="compare-btn ${inCompare ? 'on' : ''}" data-compare="${p._id}" onclick="Compare.toggle('${p._id}', this)">${compareLabel(inCompare)}</button>
     </div>
     <div class="body">
       <a href="/product.html?slug=${p.slug}"><h3>${esc(p.name)}</h3></a>

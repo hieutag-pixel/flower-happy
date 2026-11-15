@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="qty"><button type="button" id="minus">−</button><input id="qty" value="1" type="number" min="1" max="${product.stock}"><button type="button" id="plus">+</button></div>
           <button class="btn" id="addBtn" ${product.stock < 1 ? 'disabled' : ''}>${product.stock < 1 ? 'Hết hàng' : 'Thêm vào giỏ'}</button>
           <button class="btn btn-outline" id="buyBtn" ${product.stock < 1 ? 'disabled' : ''}>Mua ngay</button>
-          <button class="btn btn-outline btn-sm" onclick="Compare.toggle('${product._id}', this)">${compareLabel(Compare.ids.includes(product._id))}</button>
+          <button class="btn btn-outline btn-sm" data-compare="${product._id}" onclick="Compare.toggle('${product._id}', this)">${compareLabel(Compare.ids.includes(product._id))}</button>
         </div>
       </div>`;
 
