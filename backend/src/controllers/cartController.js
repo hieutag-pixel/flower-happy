@@ -46,6 +46,25 @@ const stemKey = (changes = []) =>
     .sort()
     .join(',');
 
+// Gắn nhãn cho từng dòng giỏ để khách phân biệt khi cùng một sản phẩm được đặt theo nhiều cách:
+// - đặt đúng như trang sản phẩm: "Mẫu gốc" (chỉ hiện nhãn khi sản phẩm đó còn dòng tuỳ chỉnh khác)
+// - có tăng/giảm số cành: "Mẫu tuỳ chỉnh A", "Mẫu tuỳ chỉnh B"... theo thứ tự thêm vào giỏ
+const labelVariants = (items) => {
+  const customCount = {};
+  items.forEach((i) => {
+    if (i.stemChanges.length) customCount[i.product._id] = (customCount[i.product._id] || 0) + 1;
+  });
+  const next = {};
+  items.forEach((i) => {
+    const id = i.product._id;
+    i.isCustom = i.stemChanges.length > 0;
+    if (i.isCustom) {
+      next[id] = (next[id] || 0) + 1;
+      i.variantLabel = `Mẫu tuỳ chỉnh ${String.fromCharCode(64 + Math.min(next[id], 26))}`;
+    } else i.variantLabel = customCount[id] ? 'Mẫu gốc' : '';
+  });
+};
+
 const getOrCreateCart = async (userId) => {
   let cart = await Cart.findOne({ user: userId });
   if (!cart) cart = await Cart.create({ user: userId, items: [] });
@@ -78,12 +97,20 @@ const buildCartResponse = async (cart) => {
         stemChanges,
         adjustAmount, // chênh lệch / 1 sản phẩm
         unitPrice, // đơn giá sau khi chỉnh số cành
+        // Thành phần thực tế của dòng này (số cành khách đặt cho từng loại hoa) để hiện ở giỏ hàng
+        composition: p.components
+          .filter((c) => c.flowerType)
+          .map((c) => {
+            const ch = stemChanges.find((x) => String(x.flowerType) === String(c.flowerType._id));
+            return { flowerName: c.flowerType.name, stems: ch ? ch.stems : c.stems, defaultStems: c.stems };
+          }),
         customerRequest: i.customerRequest,
         lineTotal: unitPrice * i.quantity,
         available: inStock && !warning,
         warning,
       };
     });
+  labelVariants(items);
   const subTotal = items.reduce((s, i) => s + i.lineTotal, 0);
   return { _id: cart._id, items, subTotal, count: items.reduce((s, i) => s + i.quantity, 0) };
 };
@@ -158,3 +185,4 @@ exports.clear = asyncHandler(async (req, res) => {
 exports.getOrCreateCart = getOrCreateCart;
 exports.buildCartResponse = buildCartResponse;
 exports.calcStemChanges = calcStemChanges;
+exports.labelVariants = labelVariants;

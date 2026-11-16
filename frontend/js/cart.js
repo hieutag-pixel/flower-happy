@@ -11,7 +11,7 @@ function renderCart(cart) {
     ${cart.items.map((i) => `<tr data-id="${i._id}">
       <td><div style="display:flex;gap:12px;align-items:center"><img src="${i.product.thumbnail}" alt="">
         <div><a href="/product.html?slug=${i.product.slug}"><b>${esc(i.product.name)}</b></a>
-        ${stemChangesHtml(i)}
+        ${variantHtml(i)}
         ${i.customerRequest ? `<div class="request-box">Yêu cầu: ${esc(i.customerRequest)}<div class="hint">Cửa hàng sẽ báo giá phụ thu (nếu có) trước khi xác nhận đơn.</div></div>` : ''}
         ${!i.available ? `<div style="color:var(--danger);font-size:13px">${esc(i.warning || 'Không đủ hàng / ngừng bán')}</div>` : ''}</div></div></td>
       <td>${money(i.unitPrice)}${i.adjustAmount ? `<div class="hint">Giá gốc ${money(i.price)}</div>` : ''}</td>

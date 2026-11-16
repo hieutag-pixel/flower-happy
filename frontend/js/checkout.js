@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     form.receiverName.value = me.fullName || '';
     form.receiverPhone.value = me.phone || '';
     $('#items').innerHTML = cart.items.map((i) => `<div class="summary-line" style="gap:10px">
-      <span>${esc(i.product.name)} × ${i.quantity}${stemChangesHtml(i)}
+      <span>${esc(i.product.name)} × ${i.quantity} ${variantHtml(i)}
         ${i.customerRequest ? `<div class="hint">Yêu cầu: ${esc(i.customerRequest)} – chờ cửa hàng báo giá</div>` : ''}</span>
       <span style="white-space:nowrap">${money(i.lineTotal)}</span></div>`).join('');
     hasRequest = cart.items.some((i) => i.customerRequest);

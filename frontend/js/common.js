@@ -115,6 +115,19 @@ function stemChangesHtml(item) {
     <div>Điều chỉnh: <b>${moneySigned(item.adjustAmount)}</b> / sản phẩm</div></div>`;
 }
 
+// Dùng ở giỏ hàng và thanh toán: nhãn "Mẫu gốc" / "Mẫu tuỳ chỉnh A, B" + số cành từng loại hoa (chữ nhỏ)
+// để khách biết mỗi dòng mình đang đặt gì. Số cành khác mẫu gốc được in đậm.
+function variantHtml(item) {
+  const label = item.variantLabel ? `<span class="variant ${item.isCustom ? 'custom' : ''}">${esc(item.variantLabel)}</span>` : '';
+  const parts = (item.composition || []).map((c) =>
+    c.stems !== c.defaultStems
+      ? `<b>${c.stems} ${esc(c.flowerName)}</b> <span class="was">(mẫu gốc ${c.defaultStems})</span>`
+      : `${c.stems} ${esc(c.flowerName)}`);
+  const stemsLine = parts.length ? `<div class="composition">Số cành: ${parts.join(' · ')}</div>` : '';
+  const adjust = item.adjustAmount ? `<div class="composition">Điều chỉnh so với mẫu gốc: <b>${moneySigned(item.adjustAmount)}</b> / sản phẩm</div>` : '';
+  return label + stemsLine + adjust;
+}
+
 // ===== Header & Footer =====
 function renderLayout() {
   fillIcons();
