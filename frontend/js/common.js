@@ -97,6 +97,9 @@ function fillIcons(root = document) {
 function toast(msg, type = 'ok') {
   let box = $('#toast');
   if (!box) { box = document.createElement('div'); box.id = 'toast'; document.body.appendChild(box); }
+  // Trang khách: đặt thông báo ngay dưới thanh header để không che biểu tượng giỏ hàng và số lượng trong giỏ
+  const header = $('.header');
+  if (header) box.style.top = `${Math.max(header.getBoundingClientRect().bottom, 0) + 12}px`;
   const t = document.createElement('div');
   t.className = `toast ${type}`;
   t.textContent = msg;

@@ -210,7 +210,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
 .footer .admin-link { display: inline; margin-left: 10px; font-size: 12px; text-decoration: underline; }
 
 /* Toast */
-#toast { position: fixed; top: 20px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+#toast { position: fixed; top: 20px; right: 20px; z-index: 999; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; pointer-events: none; transition: top .15s; }
 .toast { background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 10px; box-shadow: var(--shadow); font-size: 14px; animation: slide .25s; max-width: 340px; }
 .toast.ok { background: var(--olive); }
 .toast.err { background: var(--danger); }
