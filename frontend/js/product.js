@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     $('#plus').onclick = () => (qty.value = Math.min(product.stock, Number(qty.value) + 1));
     const options = () => ({ customerRequest: $('#custom').value.trim(), stemChanges: stemChangesPayload() });
     $('#addBtn').onclick = () => addToCart(product._id, Number(qty.value), options());
-    $('#buyBtn').onclick = async () => { if (await addToCart(product._id, Number(qty.value), options())) location.href = '/cart.html'; };
+    $('#buyBtn').onclick = async () => { if (await addToCart(product._id, Number(qty.value), options())) location.href = '/checkout.html'; }; // Mua ngay: đi thẳng tới trang thanh toán
 
     $('#related').innerHTML = res.related.map(productCard).join('');
     loadReviews();
