@@ -34,15 +34,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     hasRequest = cart.items.some((i) => i.customerRequest);
 
     // Tự điền địa chỉ từ sổ địa chỉ của tài khoản: ưu tiên địa chỉ mặc định, không có thì lấy địa chỉ đầu tiên
-    const full = (a) => `${a.detail}, ${a.ward}, ${a.province}`;
+    // Địa chỉ cũ lưu tách phường/tỉnh, địa chỉ mới chỉ có 1 dòng -> ghép những phần có dữ liệu
+    const full = (a) => [a.detail, a.ward, a.province].filter(Boolean).join(', ');
     const fill = (a) => {
       selectedAddr = a;
       if (a) {
         form.receiverName.value = a.receiverName; form.receiverPhone.value = a.receiverPhone;
-        form.detail.value = a.detail; form.ward.value = a.ward; form.province.value = a.province;
+        form.detail.value = full(a);
       } else {
         form.receiverName.value = me.fullName || ''; form.receiverPhone.value = me.phone || '';
-        form.detail.value = ''; form.ward.value = ''; form.province.value = '';
+        form.detail.value = '';
       }
       $('#saveAddrBox').classList.toggle('hidden', !!a); // chỉ hỏi lưu khi nhập địa chỉ mới
     };
@@ -69,9 +70,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   form.onsubmit = async (e) => {
     e.preventDefault();
     const body = Object.fromEntries(new FormData(form));
-    const addr = { detail: body.detail.trim(), ward: body.ward.trim(), province: body.province.trim() };
-    body.shippingAddress = `${addr.detail}, ${addr.ward}, ${addr.province}`;
-    ['detail', 'ward', 'province'].forEach((k) => delete body[k]);
+    const addr = { detail: body.detail.trim() }; // một ô địa chỉ duy nhất, không tách phường/xã, tỉnh/thành
+    body.shippingAddress = addr.detail;
+    delete body.detail;
     body.discountCode = appliedCode;
     const btn = form.querySelector('button:not([type=button])');
     btn.disabled = true;

@@ -21,11 +21,8 @@
           <div class="field"><label>Tên người nhận *</label><input name="receiverName" required></div>
           <div class="field"><label>Số điện thoại *</label><input name="receiverPhone" required pattern="0[0-9]{9}" title="10 số, bắt đầu bằng 0"></div>
         </div>
-        <div class="field"><label>Địa chỉ chi tiết *</label><input name="detail" required placeholder="Số nhà, tên đường"></div>
-        <div class="row">
-          <div class="field"><label>Phường/Xã *</label><input name="ward" required></div>
-          <div class="field"><label>Tỉnh/Thành phố *</label><input name="province" required></div>
-        </div>
+        <div class="field"><label for="addrDetail">Địa chỉ giao hàng *</label>
+          <input id="addrDetail" name="detail" required autocomplete="street-address" placeholder="Số nhà, tên đường, phường/xã, tỉnh/thành phố"></div>
         <label id="saveAddrBox" style="font-weight:400;margin:-4px 0 14px"><input type="checkbox" id="saveAddr" checked style="width:auto"> Lưu địa chỉ này vào tài khoản cho lần mua sau</label>
         <div class="row">
           <div class="field"><label>Ngày giao</label><input type="date" name="deliveryDate"></div>
