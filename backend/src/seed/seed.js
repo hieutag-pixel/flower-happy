@@ -66,8 +66,9 @@ const IMG = (f) => `/images/products/${f}`;
     // 4. Mã giảm giá
     const now = Date.now();
     const discounts = await Discount.insertMany(
-      data.discounts.map((d) => ({
+      data.discounts.map(({ for: emails = [], ...d }) => ({
         ...d,
+        assignedUsers: clients.filter((c) => emails.includes(c.email)).map((c) => c._id), // mã riêng theo tài khoản
         startDate: new Date(now - 30 * 864e5),
         endDate: new Date(now + (d.days || 90) * 864e5),
       }))

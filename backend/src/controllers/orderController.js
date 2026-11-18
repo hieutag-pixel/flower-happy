@@ -11,11 +11,18 @@ const calcShipping = (subTotal) => {
   return subTotal >= freeFrom ? 0 : fee;
 };
 
-// Áp dụng mã giảm giá, trả về { discount, amount }
-const applyDiscount = async (code, subTotal) => {
+// Số lần tài khoản đã dùng một mã (không tính đơn đã huỷ vì huỷ đơn thì hoàn lại lượt)
+const usedByUser = (discountId, userId) =>
+  Order.countDocuments({ user: userId, discount: discountId, status: { $ne: 'cancelled' } });
+
+// Áp dụng mã giảm giá cho tài khoản userId, trả về { discount, amount }
+const applyDiscount = async (code, subTotal, userId) => {
   if (!code) return { discount: null, amount: 0 };
   const discount = await Discount.findOne({ code: String(code).trim().toUpperCase() });
   if (!discount) throw new AppError('Mã giảm giá không tồn tại');
+  if (!discount.isForUser(userId)) throw new AppError('Mã giảm giá này không áp dụng cho tài khoản của bạn');
+  if ((await usedByUser(discount._id, userId)) >= discount.perUserLimit)
+    throw new AppError('Bạn đã dùng hết lượt của mã giảm giá này');
   try {
     return { discount, amount: discount.calculate(subTotal) };
   } catch (e) {
@@ -47,7 +54,7 @@ const restock = async (order) => {
 // POST /api/orders/preview  { discountCode } - Xem trước tổng tiền ở trang thanh toán
 exports.preview = asyncHandler(async (req, res) => {
   const cart = await buildCartResponse(await getOrCreateCart(req.user._id));
-  const { discount, amount } = await applyDiscount(req.body.discountCode, cart.subTotal);
+  const { discount, amount } = await applyDiscount(req.body.discountCode, cart.subTotal, req.user._id);
   const shippingFee = calcShipping(cart.subTotal);
   res.json({
     success: true,
@@ -59,6 +66,45 @@ exports.preview = asyncHandler(async (req, res) => {
       total: Math.max(cart.subTotal + shippingFee - amount, 0),
     },
   });
+});
+
+// GET /api/discounts/my - Ví mã giảm giá của tài khoản đang đăng nhập, tính theo giỏ hàng hiện tại.
+// Mỗi tài khoản thấy: mã chung + mã cấp riêng cho mình, còn hạn, còn lượt. Mã đủ điều kiện xếp trước (giảm nhiều nhất đứng đầu),
+// mã chưa đủ điều kiện kèm số tiền cần mua thêm để trang thanh toán gợi ý.
+exports.myDiscounts = asyncHandler(async (req, res) => {
+  const cart = await buildCartResponse(await getOrCreateCart(req.user._id));
+  const now = new Date();
+  const all = await Discount.find({
+    status: true,
+    startDate: { $lte: now },
+    endDate: { $gte: now },
+    $or: [{ assignedUsers: { $size: 0 } }, { assignedUsers: req.user._id }],
+  });
+  const data = [];
+  for (const d of all) {
+    if (d.usedCount >= d.maxUsage) continue; // hết lượt chung
+    // eslint-disable-next-line no-await-in-loop
+    const used = await usedByUser(d._id, req.user._id);
+    if (used >= d.perUserLimit) continue; // tài khoản này đã dùng hết lượt
+    const eligible = cart.subTotal >= d.minOrder;
+    data.push({
+      code: d.code,
+      description: d.description,
+      type: d.type,
+      value: d.value,
+      maxDiscount: d.maxDiscount,
+      minOrder: d.minOrder,
+      endDate: d.endDate,
+      personal: d.assignedUsers.length > 0, // mã cấp riêng cho tài khoản
+      remaining: Math.min(d.perUserLimit - used, d.maxUsage - d.usedCount), // số lượt tài khoản còn dùng được
+      eligible,
+      amount: eligible ? d.calculate(cart.subTotal) : 0, // số tiền giảm với giỏ hiện tại
+      missing: eligible ? 0 : d.minOrder - cart.subTotal, // cần mua thêm bao nhiêu
+      potential: d.potential(cart.subTotal), // số tiền giảm khi đủ điều kiện
+    });
+  }
+  data.sort((a, b) => b.eligible - a.eligible || (a.eligible ? b.amount - a.amount : a.missing - b.missing));
+  res.json({ success: true, data, subTotal: cart.subTotal });
 });
 
 // POST /api/orders - Đặt hàng từ giỏ
@@ -74,7 +120,7 @@ exports.create = asyncHandler(async (req, res) => {
   const bad = cart.items.find((i) => !i.available);
   if (bad) throw new AppError(bad.warning ? `"${bad.product.name}": ${bad.warning}` : `Sản phẩm "${bad.product.name}" không đủ hàng hoặc đã ngừng bán`);
 
-  const { discount, amount } = await applyDiscount(discountCode, cart.subTotal);
+  const { discount, amount } = await applyDiscount(discountCode, cart.subTotal, req.user._id);
   const shippingFee = calcShipping(cart.subTotal);
 
   // Trừ tồn kho (có điều kiện stock >= số lượng để tránh bán âm kho)

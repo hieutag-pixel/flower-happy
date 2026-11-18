@@ -13,6 +13,10 @@ const discountSchema = new mongoose.Schema(
     maxUsage: { type: Number, default: 100 }, // số lượt tối đa
     usedCount: { type: Number, default: 0 }, // số lượt đã dùng
     status: { type: Boolean, default: true },
+    description: { type: String, default: '' }, // mô tả ngắn hiện cho khách (VD: "Tri ân khách quen")
+    // Mã riêng theo tài khoản: để trống = mọi tài khoản đều dùng được; có danh sách = chỉ những tài khoản này
+    assignedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    perUserLimit: { type: Number, default: 1, min: 1 }, // mỗi tài khoản được dùng tối đa bao nhiêu lần
   },
   { timestamps: true }
 );
@@ -30,6 +34,19 @@ discountSchema.methods.calculate = function (subTotal) {
   let amount = this.type === 'percentage' ? Math.round((subTotal * this.value) / 100) : this.value;
   if (this.type === 'percentage' && this.maxDiscount) amount = Math.min(amount, this.maxDiscount);
   return Math.min(amount, subTotal);
+};
+
+// Mã này có dành cho tài khoản userId không
+discountSchema.methods.isForUser = function (userId) {
+  return !this.assignedUsers.length || this.assignedUsers.some((u) => String(u) === String(userId));
+};
+
+// Số tiền giảm nhiều nhất có thể nhận khi vừa đủ điều kiện đơn tối thiểu (để gợi ý "mua thêm ... để giảm ...")
+discountSchema.methods.potential = function (subTotal) {
+  const base = Math.max(subTotal, this.minOrder);
+  let amount = this.type === 'percentage' ? Math.round((base * this.value) / 100) : this.value;
+  if (this.type === 'percentage' && this.maxDiscount) amount = Math.min(amount, this.maxDiscount);
+  return Math.min(amount, base);
 };
 
 module.exports = mongoose.model('Discount', discountSchema);

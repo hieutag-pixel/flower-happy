@@ -59,6 +59,7 @@ router.delete('/flower-types/:id', isAdmin, flowerCrud.remove);
 
 // ---------- Mã giảm giá (admin) ----------
 const discountCrud = crud(Discount, { searchField: 'code' });
+router.get('/discounts/my', protect, order.myDiscounts); // ví mã giảm giá của khách (trang thanh toán)
 router.get('/discounts', isAdmin, discountCrud.list);
 router.post('/discounts', isAdmin, discountCrud.create);
 router.put('/discounts/:id', isAdmin, discountCrud.update);

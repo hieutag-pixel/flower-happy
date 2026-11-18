@@ -39,9 +39,11 @@
         <h3>Đơn hàng</h3>
         <div id="items"></div>
         <div class="field" style="display:flex;gap:8px;margin-top:12px">
-          <input id="discountCode" placeholder="Mã giảm giá" style="text-transform:uppercase">
+          <input id="discountCode" placeholder="Mã giảm giá" aria-label="Mã giảm giá" autocomplete="off" style="text-transform:uppercase">
           <button type="button" class="btn btn-outline btn-sm" id="applyCode">Áp dụng</button>
         </div>
+        <div id="voucherTip" class="voucher-tip hidden" aria-live="polite"></div>
+        <div id="vouchers" class="vouchers"></div>
         <div class="summary-line"><span>Tạm tính</span><span id="sSub"></span></div>
         <div class="summary-line"><span>Phí giao hàng</span><span id="sShip"></span></div>
         <div class="summary-line"><span>Giảm giá</span><span id="sDisc"></span></div>

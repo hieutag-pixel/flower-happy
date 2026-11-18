@@ -161,6 +161,16 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
 .composition { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
 .composition b { color: var(--ink); font-weight: 600; }
 .composition .was { font-size: 11px; }
+.voucher-tip { background: #fbf0d9; color: #6b4c00; border-radius: 10px; padding: 9px 12px; font-size: 13px; margin-bottom: 10px; }
+.voucher-tip a, .voucher-tip .link { color: var(--brown); font-weight: 600; text-decoration: underline; }
+.link { background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
+.vouchers { margin-bottom: 12px; }
+.vouchers-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 6px; }
+.voucher { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1.5px dashed var(--line); border-radius: 10px; padding: 9px 12px; margin-bottom: 8px; }
+.voucher.on { border-style: solid; border-color: var(--olive); background: #f6f8ec; }
+.voucher.locked .voucher-info { opacity: .7; }
+.voucher .need { color: var(--brown); font-weight: 600; }
+.voucher .btn { flex: none; }
 .request-box { background: var(--cream); border-radius: 10px; padding: 10px 12px; font-size: 13px; margin-top: 6px; }
 .request-box .actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
 .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
