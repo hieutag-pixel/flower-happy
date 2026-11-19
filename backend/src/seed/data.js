@@ -213,10 +213,16 @@ module.exports = {
     },
   ],
 
+  // for: email các tài khoản được cấp mã (bỏ trống = mã chung). perUserLimit: số lần mỗi tài khoản được dùng.
   discounts: [
-    { code: 'WELCOME10', type: 'percentage', value: 10, maxDiscount: 100000, minOrder: 300000, maxUsage: 200 },
-    { code: 'GIAM50K', type: 'fixed', value: 50000, minOrder: 500000, maxUsage: 100 },
-    { code: 'VALENTINE', type: 'percentage', value: 15, maxDiscount: 200000, minOrder: 800000, maxUsage: 50, days: 14 },
+    { code: 'WELCOME10', description: 'Chào bạn mới', type: 'percentage', value: 10, maxDiscount: 100000, minOrder: 300000, maxUsage: 200 },
+    { code: 'GIAM50K', description: 'Ưu đãi đơn lớn', type: 'fixed', value: 50000, minOrder: 500000, maxUsage: 100, perUserLimit: 2 },
+    { code: 'VALENTINE', description: 'Mùa yêu thương', type: 'percentage', value: 15, maxDiscount: 200000, minOrder: 800000, maxUsage: 50, days: 14 },
+    // Mã cấp riêng cho từng tài khoản, số lượt giới hạn
+    { code: 'AN30K', description: 'Tri ân khách quen', type: 'fixed', value: 30000, minOrder: 200000, maxUsage: 3, perUserLimit: 3, for: ['khach@flowerhappy.vn'] },
+    { code: 'BINH15', description: 'Quà sinh nhật', type: 'percentage', value: 15, maxDiscount: 80000, minOrder: 400000, maxUsage: 2, perUserLimit: 2, for: ['binh@flowerhappy.vn'] },
+    { code: 'CHAU20K', description: 'Cảm ơn bạn đã đánh giá', type: 'fixed', value: 20000, minOrder: 150000, maxUsage: 5, perUserLimit: 5, for: ['chau@flowerhappy.vn'] },
+    { code: 'VIP100K', description: 'Khách hàng thân thiết', type: 'fixed', value: 100000, minOrder: 1000000, maxUsage: 2, perUserLimit: 1, for: ['khach@flowerhappy.vn', 'binh@flowerhappy.vn'] },
   ],
 
   posts: [

@@ -8,6 +8,52 @@ async function refreshTotals() {
   $('#sShip').textContent = data.shippingFee ? money(data.shippingFee) : 'Miễn phí';
   $('#sDisc').textContent = data.discountAmount ? `-${money(data.discountAmount)}` : '0đ';
   $('#sTotal').textContent = money(data.total);
+  loadVouchers();
+}
+
+// Áp dụng / bỏ một mã giảm giá rồi tính lại tổng tiền
+async function useCode(code) {
+  const old = appliedCode;
+  appliedCode = code;
+  try {
+    await refreshTotals();
+    $('#discountCode').value = code;
+    toast(code ? `Đã áp dụng mã ${code}` : 'Đã bỏ mã giảm giá');
+  } catch (e) { appliedCode = old; toast(e.message, 'err'); }
+}
+
+// Ví mã giảm giá của tài khoản: mỗi tài khoản có mã riêng, số lượt giới hạn.
+// Mã đủ điều kiện thì có nút "Dùng"; mã chưa đủ thì báo cần mua thêm bao nhiêu.
+const voucherText = (v) =>
+  `${v.type === 'percentage' ? `Giảm ${v.value}%${v.maxDiscount ? `, tối đa ${money(v.maxDiscount)}` : ''}` : `Giảm ${money(v.value)}`} · Đơn từ ${money(v.minOrder)}`;
+
+async function loadVouchers() {
+  let list = [];
+  try { list = (await api('/discounts/my')).data; } catch { return; } // không tải được ví mã thì vẫn nhập tay được
+  const best = list.find((v) => v.eligible);
+  const near = list.find((v) => !v.eligible && (!best || v.potential > best.amount));
+  const tip = $('#voucherTip');
+  let tipHtml = '';
+  if (!appliedCode && best) tipHtml = `Đơn của bạn dùng được mã <b>${esc(best.code)}</b>, giảm <b>${money(best.amount)}</b>. <button type="button" class="link" data-code="${esc(best.code)}">Dùng ngay</button>`;
+  else if (near) tipHtml = `Mua thêm <b>${money(near.missing)}</b> để dùng mã <b>${esc(near.code)}</b> (giảm ${money(near.potential)}). <a href="/products.html">Chọn thêm hoa</a>`;
+  tip.innerHTML = tipHtml;
+  tip.classList.toggle('hidden', !tipHtml);
+
+  $('#vouchers').innerHTML = list.length
+    ? `<div class="vouchers-title">Mã giảm giá của bạn</div>${list.map((v) => {
+        const on = v.code === appliedCode;
+        return `<div class="voucher ${v.eligible ? '' : 'locked'} ${on ? 'on' : ''}">
+          <div class="voucher-info">
+            <div><b>${esc(v.code)}</b>${v.personal ? '<span class="variant custom">Dành riêng cho bạn</span>' : ''}</div>
+            <div class="composition">${v.description ? `${esc(v.description)} · ` : ''}${voucherText(v)}</div>
+            <div class="composition">Còn ${v.remaining} lượt · HSD ${fmtDate(v.endDate)}${v.eligible ? '' : ` · <span class="need">Mua thêm ${money(v.missing)}</span>`}</div>
+          </div>
+          ${on ? '<button type="button" class="btn btn-outline btn-sm" data-code="">Bỏ mã</button>'
+            : `<button type="button" class="btn btn-sm" data-code="${esc(v.code)}" ${v.eligible ? '' : 'disabled'}>Dùng</button>`}
+        </div>`;
+      }).join('')}`
+    : '';
+  document.querySelectorAll('#vouchers [data-code], #voucherTip [data-code]').forEach((b) => (b.onclick = () => useCode(b.dataset.code)));
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -59,13 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await refreshTotals();
   } catch (e) { toast(e.message, 'err'); }
 
-  $('#applyCode').onclick = async () => {
-    const code = $('#discountCode').value.trim().toUpperCase();
-    const old = appliedCode;
-    appliedCode = code;
-    try { await refreshTotals(); toast(code ? `Đã áp dụng mã ${code}` : 'Đã bỏ mã giảm giá'); }
-    catch (e) { appliedCode = old; toast(e.message, 'err'); }
-  };
+  $('#applyCode').onclick = () => useCode($('#discountCode').value.trim().toUpperCase());
 
   form.onsubmit = async (e) => {
     e.preventDefault();
