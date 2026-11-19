@@ -4,7 +4,7 @@ async function loadAddresses() {
   $('#addresses').innerHTML = data.length
     ? data.map((a) => `<div style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px">
         <b>${esc(a.receiverName)}</b> – ${esc(a.receiverPhone)} ${a.isDefault ? '<span class="tag">Mặc định</span>' : ''}<br>
-        <span class="muted">${esc(a.detail)}, ${esc(a.ward)}, ${esc(a.province)}</span>
+        <span class="muted">${esc([a.detail, a.ward, a.province].filter(Boolean).join(', '))}</span>
         <div style="margin-top:8px;display:flex;gap:8px">
           ${a.isDefault ? '' : `<button class="btn btn-outline btn-sm" onclick="setDefault('${a._id}')">Đặt mặc định</button>`}
           <button class="btn btn-outline btn-sm" onclick="removeAddr('${a._id}')">Xoá</button>
