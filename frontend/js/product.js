@@ -41,6 +41,81 @@ function refreshPrice() {
   });
 }
 
+// ===== Yêu cầu thiết kế riêng (popup) =====
+// Khách chọn thêm cành hoa + ghi chú; nội dung được gộp thành "Yêu cầu của khách hàng" gửi kèm sản phẩm.
+// Sau khi đặt hàng, cửa hàng (trang quản trị) báo giá phụ thu và khách đồng ý / từ chối ở "Đơn hàng của tôi".
+const custom = { extras: {}, note: '' }; // extras: { flowerTypeId: số cành thêm }
+let flowerTypes = null; // danh sách loại hoa của cửa hàng (tải khi mở popup lần đầu)
+
+const extraList = () => (flowerTypes || []).filter((f) => custom.extras[f._id] > 0);
+function requestText() {
+  const extras = extraList().map((f) => `${custom.extras[f._id]} ${f.name}`).join(', ');
+  return [extras && `Thêm cành: ${extras}`, custom.note && `Ghi chú: ${custom.note}`].filter(Boolean).join('. ').slice(0, 500);
+}
+
+function renderCustomSummary() {
+  const text = requestText();
+  $('#openCustom span').textContent = text ? 'Sửa yêu cầu thiết kế riêng' : 'Đặt thiết kế theo yêu cầu riêng';
+  $('#customSummary').innerHTML = text
+    ? `<div class="request-box"><b>Yêu cầu của bạn:</b> ${esc(text)}
+        <div class="hint">Gửi kèm khi đặt hàng – trạng thái "Chờ báo giá". <button type="button" class="link" id="clearCustom">Xoá yêu cầu</button></div></div>`
+    : '';
+  if (text) $('#clearCustom').onclick = () => { custom.extras = {}; custom.note = ''; renderCustomSummary(); };
+}
+
+async function openCustomDialog() {
+  if (!flowerTypes) {
+    try { flowerTypes = (await api('/flower-types?limit=100')).data; }
+    catch (e) { toast(e.message, 'err'); return; }
+  }
+  let dlg = $('#customDialog');
+  if (!dlg) { dlg = document.createElement('dialog'); dlg.id = 'customDialog'; dlg.className = 'dialog'; document.body.appendChild(dlg); }
+  const draft = { ...custom.extras }; // chỉ ghi vào custom khi bấm "Lưu yêu cầu"
+  dlg.innerHTML = `<form method="dialog" id="customForm">
+    <div class="dialog-head"><h3>Yêu cầu thiết kế riêng</h3><button type="button" class="dialog-close" aria-label="Đóng">×</button></div>
+    <ol class="steps"><li>Bạn gửi yêu cầu</li><li>Cửa hàng báo giá</li><li>Bạn đồng ý mới tính phụ thu</li></ol>
+    <h4>Thêm cành hoa</h4>
+    <div class="extra-list">${flowerTypes.map((f) => `<div class="extra-row" data-id="${f._id}">
+      <div><b>${esc(f.name)}</b><div class="composition">${f.pricePerStem ? `${money(f.pricePerStem)} / cành` : 'Cửa hàng báo giá'}</div></div>
+      <div class="stem-ctrl"><button type="button" class="dec" aria-label="Bớt ${esc(f.name)}">−</button><b>0</b><button type="button" class="inc" aria-label="Thêm ${esc(f.name)}">+</button></div>
+    </div>`).join('') || '<p class="muted">Chưa có loại hoa nào.</p>'}</div>
+    <div class="field" style="margin-top:14px"><label for="customNote">Yêu cầu khác</label>
+      <textarea id="customNote" rows="2" maxlength="300" placeholder="Ví dụ: gói giấy màu kem, đổi sang tông trắng, thêm nơ lụa">${esc(custom.note)}</textarea></div>
+    <div class="composition" id="customEstimate" aria-live="polite"></div>
+    <div class="dialog-actions"><button type="button" class="btn btn-outline" id="customCancel">Huỷ</button><button class="btn" value="save">Lưu yêu cầu</button></div>
+  </form>`;
+  const paint = () => {
+    let total = 0;
+    dlg.querySelectorAll('.extra-row').forEach((row) => {
+      const f = flowerTypes.find((x) => x._id === row.dataset.id);
+      const n = draft[f._id] || 0;
+      row.querySelector('.stem-ctrl b').textContent = n;
+      row.querySelector('.dec').disabled = n <= 0;
+      row.querySelector('.inc').disabled = n >= 50;
+      row.querySelector('.stem-ctrl').classList.toggle('changed', n > 0);
+      total += n * (f.pricePerStem || 0);
+    });
+    $('#customEstimate').innerHTML = total
+      ? `Giá tham khảo cho phần cành thêm: <b>${money(total)}</b> / sản phẩm. Phụ thu chính thức do cửa hàng báo.`
+      : 'Phụ thu (nếu có) do cửa hàng báo sau khi nhận yêu cầu.';
+  };
+  dlg.querySelectorAll('.extra-row').forEach((row) => {
+    const id = row.dataset.id;
+    row.querySelector('.dec').onclick = () => { draft[id] = Math.max((draft[id] || 0) - 1, 0); paint(); };
+    row.querySelector('.inc').onclick = () => { draft[id] = Math.min((draft[id] || 0) + 1, 50); paint(); };
+  });
+  paint();
+  dlg.querySelector('.dialog-close').onclick = $('#customCancel').onclick = () => dlg.close();
+  dlg.onclick = (e) => { if (e.target === dlg) dlg.close(); }; // bấm ra nền mờ để đóng
+  $('#customForm').onsubmit = () => {
+    custom.extras = draft;
+    custom.note = $('#customNote').value.trim();
+    renderCustomSummary();
+    if (requestText()) toast('Đã ghi yêu cầu. Cửa hàng sẽ báo giá sau khi bạn đặt hàng');
+  };
+  dlg.showModal();
+}
+
 function componentRow(c) {
   const f = c.flowerType;
   const stemCell = c.adjustable
@@ -76,9 +151,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         <table class="components"><tr><th>Loại hoa</th><th>Giá mỗi cành</th><th>Số cành</th></tr>
           ${product.components.map(componentRow).join('')}
         </table>
-        <div class="field"><label for="custom">Yêu cầu của khách hàng</label>
-          <textarea id="custom" rows="2" maxlength="500" placeholder="Thêm thiệp lớn, gói giấy màu kem, đổi hoa sang tông trắng..."></textarea>
-          <div class="hint">Cửa hàng sẽ báo giá phụ thu (nếu có) trước khi xác nhận đơn.</div></div>
+        <div class="custom-order">
+          <button type="button" class="custom-link" id="openCustom">${ICONS.sliders}<span>Đặt thiết kế theo yêu cầu riêng</span></button>
+          <div class="hint">Thêm cành hoa, đổi tông màu, giấy gói... Cửa hàng báo giá trước, bạn đồng ý mới tính phụ thu.</div>
+          <div id="customSummary"></div>
+        </div>
         <p class="muted">Còn lại: <b>${product.stock}</b> sản phẩm</p>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <div class="qty"><button type="button" id="minus">−</button><input id="qty" value="1" type="number" min="1" max="${product.stock}"><button type="button" id="plus">+</button></div>
@@ -105,7 +182,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const qty = $('#qty');
     $('#minus').onclick = () => (qty.value = Math.max(1, qty.value - 1));
     $('#plus').onclick = () => (qty.value = Math.min(product.stock, Number(qty.value) + 1));
-    const options = () => ({ customerRequest: $('#custom').value.trim(), stemChanges: stemChangesPayload() });
+    $('#openCustom').onclick = openCustomDialog;
+    const options = () => ({ customerRequest: requestText(), stemChanges: stemChangesPayload() });
     $('#addBtn').onclick = () => addToCart(product._id, Number(qty.value), options());
     $('#buyBtn').onclick = async () => { if (await addToCart(product._id, Number(qty.value), options())) location.href = '/checkout.html'; }; // Mua ngay: đi thẳng tới trang thanh toán
 
