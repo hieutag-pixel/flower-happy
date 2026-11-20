@@ -285,9 +285,10 @@ exports.adminUpdateStatus = asyncHandler(async (req, res) => {
       order.cancelReason = cancelReason || 'Cửa hàng huỷ';
       await restock(order);
     }
-    if (status === 'completed' && order.paymentMethod === 'COD') order.paymentStatus = 'paid';
   }
   if (paymentStatus) order.paymentStatus = paymentStatus;
+  // Đơn hoàn thành = đã giao và đã thu tiền (COD thu khi giao, chuyển khoản đã nhận trước) -> luôn là "đã thanh toán"
+  if (order.status === 'completed') order.paymentStatus = 'paid';
   await order.save();
   res.json({ success: true, message: 'Cập nhật đơn hàng thành công', data: order });
 });
