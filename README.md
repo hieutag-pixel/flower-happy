@@ -55,7 +55,8 @@ Thấy dòng `🌸 Flower Happy đang chạy tại: http://localhost:5000` là t
 | Admin | admin@flowerhappy.vn | Admin@123 |
 | Khách hàng | khach@flowerhappy.vn | Khach@123 |
 
-Mã giảm giá mẫu: `WELCOME10` (giảm 10%, đơn từ 300k), `GIAM50K` (đơn từ 500k), `VALENTINE` (15%, đơn từ 800k).
+Mã giảm giá mẫu dùng chung: `WELCOME10` (giảm 10%, đơn từ 300k), `GIAM50K` (đơn từ 500k), `VALENTINE` (15%, đơn từ 800k).
+Mã cấp riêng theo tài khoản (số lượt giới hạn): `AN30K` (khach@), `BINH15` (binh@), `CHAU20K` (chau@), `VIP100K` (khach@ và binh@). Trang thanh toán tự gợi ý mã dùng được và mã cần mua thêm bao nhiêu để dùng.
 
 > ⚠️ `npm run seed` **xoá sạch** dữ liệu cũ rồi tạo lại. Chỉ chạy khi muốn làm mới database.
 
@@ -139,6 +140,14 @@ DATN1/
 Tổng đơn = Tạm tính + Phí ship − Giảm giá + Phụ thu các yêu cầu khách đã đồng ý (`requestFeeTotal`).
 
 ---
+
+### Mã đơn hàng
+
+Mã đơn có dạng `FH-<ngày><tháng><năm>-<STT>`, ví dụ `FH-14112026-003`:
+
+- `FH`: viết tắt Flower Happy.
+- `14112026`: ngày đặt 14/11/2026 (giờ Việt Nam).
+- `003`: đơn thứ 3 đặt trong ngày đó, mỗi ngày đếm lại từ 001.
 
 ## 5. ⚠️ Những điểm còn thiếu / cần bạn quyết định
 

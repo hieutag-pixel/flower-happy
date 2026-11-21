@@ -35,4 +35,14 @@ const getPaging = (query, defaultLimit = 12) => {
   return { page, limit, skip: (page - 1) * limit };
 };
 
-module.exports = { AppError, asyncHandler, slugify, escapeRegex, getPaging };
+// ===== Mã đơn hàng: FH-<ngày><tháng><năm>-<số thứ tự trong ngày> =====
+// Ví dụ FH-14112026-003: FH = Flower Happy, 14112026 = đặt ngày 14/11/2026 (giờ Việt Nam), 003 = đơn thứ 3 của ngày đó.
+const orderCodePrefix = (date = new Date()) => {
+  const d = new Date(date.getTime() + 7 * 36e5); // đổi sang giờ Việt Nam (UTC+7)
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+  return `FH-${dd}${mm}${d.getUTCFullYear()}-`;
+};
+const orderCode = (date, seq) => `${orderCodePrefix(date)}${String(seq).padStart(3, '0')}`;
+
+module.exports = { AppError, asyncHandler, slugify, escapeRegex, getPaging, orderCodePrefix, orderCode };

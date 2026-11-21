@@ -14,7 +14,7 @@ const Order = require('../models/Order');
 const Discount = require('../models/Discount');
 const Post = require('../models/Post');
 const Review = require('../models/Review');
-const { slugify } = require('../utils/helpers');
+const { slugify, orderCodePrefix, orderCode } = require('../utils/helpers');
 const data = require('./data');
 
 const IMG = (f) => `/images/products/${f}`;
@@ -119,7 +119,7 @@ const IMG = (f) => `/images/products/${f}`;
       const shippingFee = subTotal >= 500000 ? 0 : 30000;
       const createdAt = new Date(now - (i * 1.2 + 0.5) * 864e5);
       orders.push({
-        code: `FH${String(100000 + i)}`,
+        code: '', // gán bên dưới theo thứ tự thời gian đặt
         user: user._id,
         receiverName: user.fullName,
         receiverPhone: user.phone,
@@ -141,6 +141,15 @@ const IMG = (f) => `/images/products/${f}`;
         updatedAt: createdAt,
       });
     }
+    // Mã đơn FH-<ngày><tháng><năm>-<STT trong ngày>: đánh số theo thứ tự đặt trong từng ngày
+    const seqByDay = {};
+    [...orders]
+      .sort((a, b) => a.createdAt - b.createdAt)
+      .forEach((o) => {
+        const day = orderCodePrefix(o.createdAt);
+        seqByDay[day] = (seqByDay[day] || 0) + 1;
+        o.code = orderCode(o.createdAt, seqByDay[day]);
+      });
     await Order.insertMany(orders, { timestamps: false });
 
     // Cập nhật "đã bán" và tồn kho theo các đơn không bị huỷ

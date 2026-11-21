@@ -36,7 +36,7 @@ const ORDER_STATUS = ['pending', 'confirmed', 'shipping', 'completed', 'cancelle
 
 const orderSchema = new mongoose.Schema(
   {
-    code: { type: String, required: true, unique: true }, // mã đơn (FH...)
+    code: { type: String, required: true, unique: true }, // mã đơn FH-<ngày><tháng><năm>-<STT trong ngày>, ví dụ FH-14112026-003
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // mã người dùng
     discount: { type: mongoose.Schema.Types.ObjectId, ref: 'Discount', default: null }, // mã giảm giá
     discountCode: { type: String, default: '' },

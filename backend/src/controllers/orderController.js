@@ -3,7 +3,7 @@ const Product = require('../models/Product');
 const Discount = require('../models/Discount');
 const Cart = require('../models/Cart');
 const { getOrCreateCart, buildCartResponse } = require('./cartController');
-const { AppError, asyncHandler, getPaging, escapeRegex } = require('../utils/helpers');
+const { AppError, asyncHandler, getPaging, escapeRegex, orderCodePrefix, orderCode } = require('../utils/helpers');
 
 const calcShipping = (subTotal) => {
   const fee = Number(process.env.SHIPPING_FEE || 30000);
@@ -30,10 +30,13 @@ const applyDiscount = async (code, subTotal, userId) => {
   }
 };
 
-const genCode = () => {
-  const d = new Date();
-  const ymd = `${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
-  return `FH${ymd}${Math.floor(1000 + Math.random() * 9000)}`;
+// Sinh mã đơn FH-<ngày><tháng><năm>-<STT>: lấy số thứ tự lớn nhất của các đơn trong ngày rồi cộng 1
+const genCode = async () => {
+  const now = new Date();
+  const prefix = orderCodePrefix(now);
+  const today = await Order.find({ code: { $regex: `^${prefix}` } }).select('code');
+  const last = today.reduce((m, o) => Math.max(m, Number(o.code.slice(prefix.length)) || 0), 0);
+  return orderCode(now, last + 1);
 };
 
 // Tính lại tổng tiền đơn: chỉ cộng phụ thu của những yêu cầu khách ĐÃ ĐỒNG Ý
@@ -141,8 +144,8 @@ exports.create = asyncHandler(async (req, res) => {
     done.push(i);
   }
 
-  const order = await Order.create({
-    code: genCode(),
+  const orderData = {
+    code: '',
     user: req.user._id,
     discount: discount ? discount._id : null,
     discountCode: discount ? discount.code : '',
@@ -170,7 +173,26 @@ exports.create = asyncHandler(async (req, res) => {
     discountAmount: amount,
     total: Math.max(cart.subTotal + shippingFee - amount, 0),
     paymentMethod,
-  });
+  };
+  // Hai khách đặt cùng lúc có thể nhận trùng số thứ tự -> mã bị trùng (code là unique) thì sinh lại và thử lại
+  let order;
+  for (let attempt = 0; !order; attempt++) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      orderData.code = await genCode();
+      // eslint-disable-next-line no-await-in-loop
+      order = await Order.create(orderData);
+    } catch (e) {
+      if (e.code !== 11000 || attempt >= 4) {
+        // Tạo đơn thất bại -> hoàn lại tồn kho đã trừ
+        for (const d of done) {
+          // eslint-disable-next-line no-await-in-loop
+          await Product.updateOne({ _id: d.product._id }, { $inc: { stock: d.quantity, sold: -d.quantity } });
+        }
+        throw e;
+      }
+    }
+  }
 
   if (discount) await Discount.updateOne({ _id: discount._id }, { $inc: { usedCount: 1 } });
   await Cart.updateOne({ user: req.user._id }, { items: [] });
