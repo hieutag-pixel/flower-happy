@@ -146,6 +146,7 @@ async function sendQuote(orderId, itemId) {
 async function orderDetail(id) {
   const { data: o } = await adminApi(`/orders/${id}`);
   const openReq = o.items.some((i) => OPEN_REQUEST.includes(i.requestStatus));
+  const done = o.status === 'completed';
   // Còn yêu cầu chưa chốt thì không cho chọn "Đã xác nhận"
   const next = NEXT[o.status].filter((s) => !(s === 'confirmed' && openReq));
   openModal(`Đơn ${o.code}`, `
@@ -163,8 +164,11 @@ async function orderDetail(id) {
     ${next.length ? `<div class="row"><div class="field"><label>Chuyển trạng thái</label><select name="status"><option value="">-- Giữ nguyên --</option>
       ${next.map((s) => `<option value="${s}">${ORDER_STATUS[s]}</option>`).join('')}</select></div>
       <div class="field hidden" id="cancelReasonBox"><label>Lý do huỷ</label><input name="cancelReason" placeholder="Bỏ trống: Cửa hàng huỷ"></div></div>` : ''}
-    ${checkbox('paid', 'Đã thanh toán', o.paymentStatus === 'paid')}`,
-  async (f) => {
+    ${done
+      ? `<p><b>Thanh toán:</b> ${PAYMENT[o.paymentMethod]} – <span class="status completed">Đã thanh toán</span></p>`
+      : checkbox('paid', 'Đã thanh toán', o.paymentStatus === 'paid')}`,
+  // Đơn đã hoàn thành: giao xong là đã thu tiền nên không còn ô tick "Đã thanh toán" và không còn gì để cập nhật
+  done ? null : async (f) => {
     const body = { paymentStatus: f.get('paid') ? 'paid' : 'unpaid' };
     if (f.get('status')) { body.status = f.get('status'); body.cancelReason = f.get('cancelReason'); }
     await adminApi(`/orders/${id}/status`, { method: 'PUT', body });
