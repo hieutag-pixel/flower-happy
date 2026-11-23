@@ -81,7 +81,8 @@ exports.myDiscounts = asyncHandler(async (req, res) => {
     status: true,
     startDate: { $lte: now },
     endDate: { $gte: now },
-    $or: [{ assignedUsers: { $size: 0 } }, { assignedUsers: req.user._id }],
+    // Mã tạo trước khi có trường assignedUsers (chưa seed lại) không có trường này -> coi như mã chung
+    $or: [{ assignedUsers: { $exists: false } }, { assignedUsers: { $size: 0 } }, { assignedUsers: req.user._id }],
   });
   const data = [];
   for (const d of all) {
