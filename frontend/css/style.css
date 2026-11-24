@@ -276,7 +276,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
 /* Rà soát giao diện: giỏ hàng và thanh so sánh trên màn hình nhỏ, giảm chuyển động */
 .cart-table .variant { margin-left: 0; }
 .compare-bar { max-width: calc(100vw - 24px); white-space: nowrap; }
-@media (max-width: 800px) {
+/* Giỏ hàng xếp dọc từ 1100px trở xuống: ở cỡ máy tính bảng / cửa sổ hẹp bảng 5 cột bị bóp và tràn ngang */
+@media (max-width: 1100px) {
   .cart-table, .cart-table tbody { display: block; }
   .cart-table tr:first-child { display: none; }
   .cart-table tr { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
@@ -284,6 +285,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
   .cart-table td { border: 0; padding: 0; }
   .cart-table td:first-child { grid-column: 1 / -1; }
   .cart-table td:nth-child(odd):not(:first-child) { justify-self: end; }
+}
+@media (max-width: 800px) {
   .compare-bar { font-size: 13px; gap: 8px; padding: 8px 10px 8px 14px; }
   .steps { flex-direction: column; gap: 6px; }
 }
