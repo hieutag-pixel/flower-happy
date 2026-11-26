@@ -294,3 +294,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
   .toast { animation: none; }
   #toast, .btn { transition: none; }
 }
+
+/* Đơn hàng của tôi trên điện thoại: mỗi sản phẩm xếp thành khối (ảnh | nội dung), không còn tràn ngang */
+@media (max-width: 800px) {
+  .order-items, .order-items tbody { display: block; }
+  .order-items tr { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 6px 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .order-items tr:last-child { border-bottom: 0; }
+  .order-items td { border: 0; padding: 0; width: auto !important; text-align: left !important; }
+  .order-items td:first-child { grid-row: 1 / span 3; }
+  .order-items td:not(:first-child) { grid-column: 2; }
+  .order-items td:empty { display: none; }
+}

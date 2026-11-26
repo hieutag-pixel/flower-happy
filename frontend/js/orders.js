@@ -25,7 +25,7 @@ async function loadOrders() {
         <div><b>Đơn ${o.code}</b> <span class="muted">• ${fmtDateTime(o.createdAt)}</span></div>
         <span class="status ${o.status}">${ORDER_STATUS[o.status]}</span>
       </div>
-      <table class="table" style="margin:10px 0">
+      <table class="table order-items" style="margin:10px 0">
         ${o.items.map((i) => `<tr><td style="width:80px"><img src="${i.thumbnail}" alt=""></td>
           <td>${esc(i.name)} × ${i.quantity}${stemChangesHtml(i)}${requestHtml(o, i)}</td>
           <td style="text-align:right;white-space:nowrap">${money((i.price + i.adjustAmount) * i.quantity)}</td>
