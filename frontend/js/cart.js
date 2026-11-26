@@ -30,7 +30,11 @@ function renderCart(cart) {
     };
     row.querySelector('.dec').onclick = () => input.value > 1 && update(Number(input.value) - 1);
     row.querySelector('.inc').onclick = () => update(Number(input.value) + 1);
-    input.onchange = () => update(Number(input.value));
+    input.onchange = () => {
+      const n = Number(input.value);
+      if (!Number.isInteger(n) || n < 1) { toast('Số lượng phải là số nguyên từ 1 trở lên', 'err'); input.value = input.defaultValue; return; }
+      update(n);
+    };
     row.querySelector('.del').onclick = async () => {
       renderCart((await api(`/cart/items/${id}`, { method: 'DELETE' })).data);
       updateCartCount();

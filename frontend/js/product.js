@@ -180,12 +180,24 @@ document.addEventListener('DOMContentLoaded', async () => {
       img.classList.add('active');
     }));
     const qty = $('#qty');
-    $('#minus').onclick = () => (qty.value = Math.max(1, qty.value - 1));
-    $('#plus').onclick = () => (qty.value = Math.min(product.stock, Number(qty.value) + 1));
+    // Số lượng phải là số nguyên từ 1 đến số còn trong kho. Gõ sai (0, số âm, số lẻ, để trống) thì báo lỗi và đưa về giá trị hợp lệ
+    const validQty = () => {
+      const n = Number(qty.value);
+      if (qty.value.trim() === '' || !Number.isInteger(n) || n < 1) {
+        toast('Số lượng phải là số nguyên từ 1 trở lên', 'err');
+        qty.value = Math.min(Math.max(Math.floor(n) || 1, 1), product.stock);
+        return null;
+      }
+      if (n > product.stock) { toast(`Chỉ còn ${product.stock} sản phẩm trong kho`, 'err'); qty.value = product.stock; return null; }
+      return n;
+    };
+    qty.onchange = validQty;
+    $('#minus').onclick = () => (qty.value = Math.max(1, (Math.floor(Number(qty.value)) || 1) - 1));
+    $('#plus').onclick = () => (qty.value = Math.min(product.stock, (Math.floor(Number(qty.value)) || 0) + 1));
     $('#openCustom').onclick = openCustomDialog;
     const options = () => ({ customerRequest: requestText(), stemChanges: stemChangesPayload() });
-    $('#addBtn').onclick = () => addToCart(product._id, Number(qty.value), options());
-    $('#buyBtn').onclick = async () => { if (await addToCart(product._id, Number(qty.value), options())) location.href = '/checkout.html'; }; // Mua ngay: đi thẳng tới trang thanh toán
+    $('#addBtn').onclick = () => { const n = validQty(); if (n) addToCart(product._id, n, options()); };
+    $('#buyBtn').onclick = async () => { const n = validQty(); if (n && (await addToCart(product._id, n, options()))) location.href = '/checkout.html'; }; // Mua ngay: đi thẳng tới trang thanh toán
 
     $('#related').innerHTML = res.related.map(productCard).join('');
     loadReviews();
