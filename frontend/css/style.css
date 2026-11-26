@@ -287,7 +287,9 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
   .cart-table td:nth-child(odd):not(:first-child) { justify-self: end; }
 }
 @media (max-width: 800px) {
-  .compare-bar { font-size: 13px; gap: 8px; padding: 8px 10px 8px 14px; }
+  .compare-bar { font-size: 13px; gap: 8px; padding: 8px 10px 8px 14px; left: 12px; right: 12px; transform: none; max-width: none; justify-content: space-between; }
+  .compare-bar span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .compare-bar .btn, .compare-bar .compare-clear { flex: none; }
   .steps { flex-direction: column; gap: 6px; }
 }
 @media (prefers-reduced-motion: reduce) {
