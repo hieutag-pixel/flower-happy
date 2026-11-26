@@ -10,6 +10,8 @@ function createAuth({ tokenKey, userKey, loginPage, afterLogout }) {
     save(token, user) { localStorage.setItem(tokenKey, token); localStorage.setItem(userKey, JSON.stringify(user)); },
     clear() { localStorage.removeItem(tokenKey); localStorage.removeItem(userKey); },
     logout() { this.clear(); location.href = afterLogout; },
+    // Chuyển sang trang đăng nhập, đăng nhập xong quay lại trang đang xem
+    goLogin() { location.href = `${loginPage}?next=${encodeURIComponent(location.pathname + location.search + location.hash)}`; },
     require() {
       if (!this.token) { location.href = `${loginPage}?next=${encodeURIComponent(location.pathname + location.search + location.hash)}`; throw new Error('login'); }
     },
@@ -209,7 +211,7 @@ async function updateQuoteNotice() {
 
 // Thêm vào giỏ. options: { customerRequest, stemChanges: [{ flowerType, stems }] }. Trả về true nếu thành công
 async function addToCart(productId, quantity = 1, options = {}) {
-  if (!Auth.token) { toast('Vui lòng đăng nhập để thêm vào giỏ', 'err'); setTimeout(() => Auth.require(), 800); return false; }
+  if (!Auth.token) { toast('Vui lòng đăng nhập để thêm vào giỏ. Đang chuyển tới trang đăng nhập...', 'err'); setTimeout(() => Auth.goLogin(), 1500); return false; }
   try {
     await api('/cart/items', { method: 'POST', body: { productId, quantity, customerRequest: options.customerRequest || '', stemChanges: options.stemChanges || [] } });
     toast('Đã thêm vào giỏ hàng');

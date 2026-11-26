@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   $('#reviewForm').onsubmit = async (e) => {
     e.preventDefault();
-    if (!Auth.token) return Auth.require();
+    if (!Auth.token) return Auth.goLogin();
     const f = new FormData(e.target);
     try {
       await api(`/products/${product._id}/reviews`, { method: 'POST', body: { rating: Number(f.get('rating')), comment: f.get('comment') } });
