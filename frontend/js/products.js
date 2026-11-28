@@ -52,7 +52,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('#minPrice').value = state.minPrice;
   $('#maxPrice').value = state.maxPrice;
   $('#sort').onchange = (e) => { state.sort = e.target.value; state.page = 1; load(); };
-  $('#applyPrice').onclick = () => { state.minPrice = $('#minPrice').value; state.maxPrice = $('#maxPrice').value; state.page = 1; load(); };
+  $('#applyPrice').onclick = () => {
+    const min = $('#minPrice').value, max = $('#maxPrice').value;
+    if (Number(min) < 0 || Number(max) < 0) return toast('Giá không được là số âm', 'err');
+    if (min && max && Number(min) > Number(max)) return toast('Giá "Từ" phải nhỏ hơn hoặc bằng giá "Đến"', 'err');
+    state.minPrice = min; state.maxPrice = max; state.page = 1; load();
+  };
   try { categories = (await api('/categories')).data; } catch { /* vẫn hiển thị sản phẩm */ }
   // Link cũ dạng ?category=<kiểu dáng> (VD ?category=gio-hoa) -> chuyển sang nhóm kiểu dáng
   if (categories.find((c) => c.slug === state.category)?.type === 'style' && !state.style) { state.style = state.category; state.category = ''; }
