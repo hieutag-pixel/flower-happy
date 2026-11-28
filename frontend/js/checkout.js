@@ -19,7 +19,7 @@ async function useCode(code) {
     await refreshTotals();
     $('#discountCode').value = code;
     toast(code ? `Đã áp dụng mã ${code}` : 'Đã bỏ mã giảm giá');
-  } catch (e) { appliedCode = old; toast(e.message, 'err'); }
+  } catch (e) { appliedCode = old; $('#discountCode').value = old; toast(e.message, 'err'); } // mã lỗi: trả ô nhập về mã đang áp dụng
 }
 
 // Ví mã giảm giá của tài khoản: mỗi tài khoản có mã riêng, số lượt giới hạn.
