@@ -35,6 +35,20 @@ const getPaging = (query, defaultLimit = 12) => {
   return { page, limit, skip: (page - 1) * limit };
 };
 
+// ===== Tìm kiếm tiếng Việt không phân biệt dấu và hoa/thường =====
+// "hong" khớp "Hồng", "hoa hong do" khớp "Hoa hồng đỏ". Mỗi chữ cái được đổi thành nhóm gồm mọi biến thể có dấu của nó.
+const VI = {
+  a: 'aàáảãạăằắẳẵặâầấẩẫậ', e: 'eèéẻẽẹêềếểễệ', i: 'iìíỉĩị', o: 'oòóỏõọôồốổỗộơờớởỡợ',
+  u: 'uùúủũụưừứửữự', y: 'yỳýỷỹỵ', d: 'dđ',
+};
+const viSearchRegex = (q) =>
+  String(q).trim().split(/\s+/).map((word) =>
+    [...word].map((ch) => {
+      const base = ch.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace('đ', 'd');
+      if (VI[base]) return `[${VI[base]}${VI[base].toUpperCase()}]`;
+      return escapeRegex(ch);
+    }).join('')).join('\\s+');
+
 // ===== Mã đơn hàng: FH-<ngày><tháng><năm>-<số thứ tự trong ngày> =====
 // Ví dụ FH-14112026-003: FH = Flower Happy, 14112026 = đặt ngày 14/11/2026 (giờ Việt Nam), 003 = đơn thứ 3 của ngày đó.
 const orderCodePrefix = (date = new Date()) => {
@@ -45,4 +59,4 @@ const orderCodePrefix = (date = new Date()) => {
 };
 const orderCode = (date, seq) => `${orderCodePrefix(date)}${String(seq).padStart(3, '0')}`;
 
-module.exports = { AppError, asyncHandler, slugify, escapeRegex, getPaging, orderCodePrefix, orderCode };
+module.exports = { AppError, asyncHandler, slugify, escapeRegex, getPaging, orderCodePrefix, orderCode, viSearchRegex };

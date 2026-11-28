@@ -3,7 +3,8 @@ const Product = require('../models/Product');
 const Category = require('../models/Category');
 const Review = require('../models/Review');
 const Order = require('../models/Order');
-const { AppError, asyncHandler, slugify, escapeRegex, getPaging } = require('../utils/helpers');
+const FlowerType = require('../models/FlowerType');
+const { AppError, asyncHandler, slugify, escapeRegex, getPaging, viSearchRegex } = require('../utils/helpers');
 
 const isAdmin = (req) => req.user && req.user.role === 'admin';
 
@@ -29,7 +30,16 @@ exports.list = asyncHandler(async (req, res) => {
   if (isAdmin(req) && status === 'hidden') filter.status = false;
   if (isAdmin(req) && status === 'all') delete filter.status;
 
-  if (q) filter.name = { $regex: escapeRegex(q), $options: 'i' };
+  // Tìm kiếm: không phân biệt dấu, khớp theo tên bó hoa, loại hoa trong thành phần (VD "hoa hồng") hoặc tên dịp/kiểu dáng
+  if (q && String(q).trim()) {
+    const rx = { $regex: viSearchRegex(q), $options: 'i' };
+    const [flowers, cats] = await Promise.all([FlowerType.find({ name: rx }).select('_id'), Category.find({ name: rx }).select('_id')]);
+    filter.$or = [
+      { name: rx },
+      { 'components.flowerType': { $in: flowers.map((f) => f._id) } },
+      { categories: { $in: cats.map((c) => c._id) } },
+    ];
+  }
   if (category) {
     const cat = await Category.findOne({ slug: category });
     filter.categories = cat ? cat._id : null;
