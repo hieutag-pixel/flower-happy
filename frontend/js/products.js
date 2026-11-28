@@ -1,7 +1,8 @@
 // Trang danh sách sản phẩm: tìm kiếm, lọc theo thẻ, khoảng giá, sắp xếp, phân trang
 const state = {
   q: qs('q') || '',
-  category: qs('category') || '',
+  category: qs('category') || '', // dịp tặng
+  style: qs('style') || '', // kiểu dáng (lọc cùng lúc với dịp tặng)
   sort: qs('sort') || 'newest',
   minPrice: qs('minPrice') || '',
   maxPrice: qs('maxPrice') || '',
@@ -16,20 +17,23 @@ function syncUrl() {
 }
 
 function renderFilters() {
-  const item = (c) => `<a href="#" data-slug="${c.slug}" class="${state.category === c.slug ? 'active' : ''}">${esc(c.name)}</a>`;
-  const all = `<a href="#" data-slug="" class="${!state.category ? 'active' : ''}">Tất cả</a>`;
-  $('#occasionList').innerHTML = all + categories.filter((c) => c.type === 'occasion').map(item).join('');
-  $('#styleList').innerHTML = categories.filter((c) => c.type === 'style').map(item).join('');
+  // Hai nhóm lọc độc lập: chọn "Sinh nhật" rồi chọn "Giỏ hoa" sẽ ra giỏ hoa sinh nhật
+  const group = (key, type) => {
+    const item = (c) => `<a href="#" data-key="${key}" data-slug="${c.slug}" class="${state[key] === c.slug ? 'active' : ''}">${esc(c.name)}</a>`;
+    return `<a href="#" data-key="${key}" data-slug="" class="${!state[key] ? 'active' : ''}">Tất cả</a>` + categories.filter((c) => c.type === type).map(item).join('');
+  };
+  $('#occasionList').innerHTML = group('category', 'occasion');
+  $('#styleList').innerHTML = group('style', 'style');
   document.querySelectorAll('.filter-box a[data-slug]').forEach((a) => {
-    a.onclick = (e) => { e.preventDefault(); state.category = a.dataset.slug; state.page = 1; load(); };
+    a.onclick = (e) => { e.preventDefault(); state[a.dataset.key] = a.dataset.slug; state.page = 1; load(); };
   });
 }
 
 async function load() {
   syncUrl();
   renderFilters();
-  const cat = categories.find((c) => c.slug === state.category);
-  $('#title').textContent = state.q ? `Kết quả cho "${state.q}"` : cat ? cat.name : 'Tất cả sản phẩm';
+  const picked = [state.category, state.style].map((s) => categories.find((c) => c.slug === s)).filter(Boolean);
+  $('#title').textContent = state.q ? `Kết quả cho "${state.q}"` : picked.length ? picked.map((c) => c.name).join(' · ') : 'Tất cả sản phẩm';
   const params = new URLSearchParams({ ...state, limit: 12 });
   [...params.keys()].forEach((k) => !params.get(k) && params.delete(k));
   $('#list').innerHTML = '<p class="muted">Đang tải...</p>';
@@ -50,5 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('#sort').onchange = (e) => { state.sort = e.target.value; state.page = 1; load(); };
   $('#applyPrice').onclick = () => { state.minPrice = $('#minPrice').value; state.maxPrice = $('#maxPrice').value; state.page = 1; load(); };
   try { categories = (await api('/categories')).data; } catch { /* vẫn hiển thị sản phẩm */ }
+  // Link cũ dạng ?category=<kiểu dáng> (VD ?category=gio-hoa) -> chuyển sang nhóm kiểu dáng
+  if (categories.find((c) => c.slug === state.category)?.type === 'style' && !state.style) { state.style = state.category; state.category = ''; }
   load();
 });

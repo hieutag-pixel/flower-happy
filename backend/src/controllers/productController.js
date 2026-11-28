@@ -22,7 +22,7 @@ const uniqueSlug = async (name, excludeId) => {
 // Query: q (tìm kiếm), category (slug), minPrice, maxPrice, sort (newest|price_asc|price_desc|best), page, limit
 // Admin thêm: status=all|active|hidden
 exports.list = asyncHandler(async (req, res) => {
-  const { q, category, minPrice, maxPrice, sort = 'newest', status } = req.query;
+  const { q, category, style, minPrice, maxPrice, sort = 'newest', status } = req.query;
   const { page, limit, skip } = getPaging(req.query, 12);
 
   const filter = { deleted: false };
@@ -40,9 +40,12 @@ exports.list = asyncHandler(async (req, res) => {
       { categories: { $in: cats.map((c) => c._id) } },
     ];
   }
-  if (category) {
-    const cat = await Category.findOne({ slug: category });
-    filter.categories = cat ? cat._id : null;
+  // Lọc theo dịp tặng (category) và kiểu dáng (style) cùng lúc: sản phẩm phải thuộc tất cả các thẻ đã chọn
+  const slugs = [category, style].filter(Boolean);
+  if (slugs.length) {
+    const cats = await Category.find({ slug: { $in: slugs } }).select('_id');
+    const byTag = cats.length === slugs.length ? { categories: { $all: cats.map((c) => c._id) } } : { categories: null };
+    filter.$and = [byTag];
   }
 
   // Lọc theo giá bán thực tế (salePrice nếu có, ngược lại originalPrice)
